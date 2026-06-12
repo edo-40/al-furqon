@@ -3,6 +3,7 @@
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Link from "next/link";
+
 import {
   motion,
   AnimatePresence,
@@ -10,11 +11,12 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
+
 import { useEffect, useMemo, useState } from "react";
-// ✅ Penggantinya
+
 import {
   FaMosque,
-  FaKaaba,            // ← ganti FaKaaba (tidak ada di fa6)
+  FaKaaba,
   FaCampground,
   FaArrowRight,
   FaCircleCheck,
@@ -27,22 +29,12 @@ import {
   FaShield,
   FaGraduationCap,
   FaHandshake,
-  FaRotateRight,
-  FaWrench,
   FaFilm,
-  FaListUl,           // ← ganti FaListUl & FaListUl (tidak ada di fa6)
+  FaListUl,
 } from "react-icons/fa6";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
 const FALLBACK_IMAGE = "/smk.jpg";
-
-/* =========================================================
-   WHATSAPP ADMIN
-   Ganti nomor di bawah dengan nomor admin pesantren.
-   Format wajib: kode negara + nomor, tanpa 0, tanpa +, tanpa spasi.
-   Contoh:
-   0812-3456-7890 menjadi 6281234567890
-========================================================= */
 
 const ADMIN_WHATSAPP_NUMBER = "6283899601027";
 
@@ -53,10 +45,212 @@ const WHATSAPP_ADMIN_URL = `https://wa.me/${ADMIN_WHATSAPP_NUMBER}?text=${encode
   ADMIN_WHATSAPP_MESSAGE
 )}`;
 
+/* =========================================================
+   DEFAULT DATA
+   Dipakai agar halaman Program tetap tampil normal
+   walaupun backend /api/program sedang lambat atau gagal.
+========================================================= */
+
+const DEFAULT_PROGRAM_DATA = {
+  hero: {
+    badge: "Program Pesantren",
+    title: "Program pembinaan",
+    highlight: "santri Al-Furqon.",
+    desc: "Program Pondok Pesantren Al-Furqon dirancang untuk membentuk santri yang berilmu, beradab, mandiri, dan siap menghadapi masa depan.",
+    arabic: "وَقُلْ رَبِّ زِدْنِي عِلْمًا",
+    source: "QS. Thaha: 114",
+    image: "/hero-santri.jpg",
+  },
+
+  stats: [
+    {
+      value: "24 Jam",
+      label: "Lingkungan pembinaan santri",
+      iconKey: "mosque",
+    },
+    {
+      value: "Adab",
+      label: "Fokus karakter santri",
+      iconKey: "hands",
+    },
+    {
+      value: "Ilmu",
+      label: "Pembelajaran agama dan umum",
+      iconKey: "book",
+    },
+    {
+      value: "Mandiri",
+      label: "Kedisiplinan kehidupan pesantren",
+      iconKey: "shield",
+    },
+  ],
+
+  programs: [
+    {
+      title: "Tahfidz & Al-Qur'an",
+      subtitle: "Program Keislaman",
+      desc: "Santri dibimbing untuk membaca, memahami, menghafal, dan mencintai Al-Qur'an dalam kehidupan sehari-hari.",
+      longDesc:
+        "Program Tahfidz dan Al-Qur'an menjadi bagian penting dalam pembinaan santri. Kegiatan ini membantu santri memperbaiki bacaan, menambah hafalan, membangun kedekatan dengan Al-Qur'an, dan membiasakan nilai-nilai Islam dalam kehidupan pesantren.",
+      image: "/hero-santri.jpg",
+      iconKey: "quran",
+      features: ["Tahsin", "Tahfidz", "Murajaah", "Adab Qur'ani"],
+    },
+    {
+      title: "Pendidikan Formal",
+      subtitle: "Program Akademik",
+      desc: "Santri mengikuti pembelajaran formal yang terarah untuk mendukung kemampuan akademik dan masa depan.",
+      longDesc:
+        "Pendidikan formal membantu santri menyeimbangkan ilmu agama dan ilmu umum. Program ini diarahkan agar santri memiliki kemampuan akademik, disiplin belajar, dan kesiapan untuk melanjutkan pendidikan atau menghadapi dunia kerja.",
+      image: "/smk.jpg",
+      iconKey: "graduate",
+      features: ["Kelas Terarah", "Akademik", "Praktik", "Evaluasi"],
+    },
+    {
+      title: "Pembinaan Karakter",
+      subtitle: "Program Adab",
+      desc: "Santri dibiasakan menjaga adab, sopan santun, tanggung jawab, dan kedisiplinan dalam kehidupan harian.",
+      longDesc:
+        "Pembinaan karakter dilakukan melalui kebiasaan harian di pesantren. Santri dilatih untuk menghormati guru, menjaga hubungan dengan teman, bertanggung jawab terhadap kewajiban, dan membangun akhlak yang baik.",
+      image: "/hero-santri.jpg",
+      iconKey: "hands",
+      features: ["Adab", "Disiplin", "Tanggung Jawab", "Kepedulian"],
+    },
+    {
+      title: "Kemandirian Santri",
+      subtitle: "Program Kehidupan",
+      desc: "Santri belajar hidup mandiri melalui rutinitas pesantren, kebersihan, ibadah, dan kegiatan bersama.",
+      longDesc:
+        "Kemandirian santri dibentuk melalui rutinitas yang teratur. Mulai dari mengatur waktu, menjaga barang pribadi, mengikuti jadwal, hingga berpartisipasi dalam kegiatan lingkungan pesantren.",
+      image: "/hero-santri.jpg",
+      iconKey: "users",
+      features: ["Mandiri", "Rapi", "Tertib", "Peduli"],
+    },
+  ],
+
+  timeline: [
+    {
+      number: "01",
+      title: "Pengenalan lingkungan pesantren",
+      desc: "Santri mulai mengenal aturan, jadwal, pembina, teman, dan lingkungan kehidupan pesantren.",
+    },
+    {
+      number: "02",
+      title: "Pembiasaan ibadah dan adab",
+      desc: "Santri dibimbing untuk terbiasa menjalankan ibadah, menjaga adab, dan mengikuti kegiatan harian.",
+    },
+    {
+      number: "03",
+      title: "Penguatan ilmu dan keterampilan",
+      desc: "Santri mengikuti pembelajaran agama, akademik, serta kegiatan pendukung sesuai program pesantren.",
+    },
+    {
+      number: "04",
+      title: "Pembentukan karakter mandiri",
+      desc: "Santri dilatih untuk bertanggung jawab, disiplin, peduli, dan siap menghadapi masa depan.",
+    },
+  ],
+
+  gallery: [
+    "/hero-santri.jpg",
+    "/smk.jpg",
+    "/logo.png",
+    "/hero-santri.jpg",
+    "/smk.jpg",
+    "/logo.png",
+  ],
+
+  advantages: [
+    {
+      title: "Lingkungan terarah",
+      desc: "Santri berada dalam lingkungan yang membantu membentuk kebiasaan baik melalui jadwal dan bimbingan.",
+      iconKey: "mosque",
+    },
+    {
+      title: "Pembinaan adab",
+      desc: "Adab dan akhlak menjadi dasar penting dalam setiap kegiatan santri di pesantren.",
+      iconKey: "hands",
+    },
+    {
+      title: "Kemandirian santri",
+      desc: "Santri belajar mengatur diri, disiplin, bertanggung jawab, dan peduli terhadap lingkungan.",
+      iconKey: "shield",
+    },
+  ],
+
+  faq: [
+    {
+      q: "Apa saja program utama di Pondok Pesantren Al-Furqon?",
+      a: "Program utama meliputi pembinaan Al-Qur'an, pendidikan formal, pembinaan karakter, ibadah harian, dan kemandirian santri.",
+    },
+    {
+      q: "Apakah program ini cocok untuk calon santri baru?",
+      a: "Ya. Program disusun untuk membantu santri baru beradaptasi dengan lingkungan pesantren secara bertahap.",
+    },
+    {
+      q: "Apakah wali santri bisa bertanya ke admin?",
+      a: "Bisa. Wali santri dapat menghubungi admin pesantren melalui WhatsApp untuk mendapatkan informasi lebih lanjut.",
+    },
+  ],
+};
 
 /* =========================================================
    HELPERS
 ========================================================= */
+
+function normalizeProgramData(data) {
+  if (!data || typeof data !== "object") {
+    return DEFAULT_PROGRAM_DATA;
+  }
+
+  return {
+    hero: {
+      ...DEFAULT_PROGRAM_DATA.hero,
+      ...(data.hero || {}),
+    },
+
+    stats:
+      Array.isArray(data.stats) && data.stats.length
+        ? data.stats
+        : DEFAULT_PROGRAM_DATA.stats,
+
+    programs:
+      Array.isArray(data.programs) && data.programs.length
+        ? data.programs.map((item, index) => ({
+            ...DEFAULT_PROGRAM_DATA.programs[
+              index % DEFAULT_PROGRAM_DATA.programs.length
+            ],
+            ...item,
+            features:
+              Array.isArray(item.features) && item.features.length
+                ? item.features
+                : DEFAULT_PROGRAM_DATA.programs[
+                    index % DEFAULT_PROGRAM_DATA.programs.length
+                  ].features,
+          }))
+        : DEFAULT_PROGRAM_DATA.programs,
+
+    timeline:
+      Array.isArray(data.timeline) && data.timeline.length
+        ? data.timeline
+        : DEFAULT_PROGRAM_DATA.timeline,
+
+    gallery:
+      Array.isArray(data.gallery) && data.gallery.length
+        ? data.gallery
+        : DEFAULT_PROGRAM_DATA.gallery,
+
+    advantages:
+      Array.isArray(data.advantages) && data.advantages.length
+        ? data.advantages
+        : DEFAULT_PROGRAM_DATA.advantages,
+
+    faq:
+      Array.isArray(data.faq) && data.faq.length
+        ? data.faq
+        : DEFAULT_PROGRAM_DATA.faq,
+  };
+}
 
 function getIcon(key) {
   const icons = {
@@ -88,7 +282,9 @@ function SafeImage({ src, alt, className = "", fallback = FALLBACK_IMAGE }) {
       alt={alt || "image"}
       className={className}
       onError={() => {
-        if (currentSrc !== fallback) setCurrentSrc(fallback);
+        if (currentSrc !== fallback) {
+          setCurrentSrc(fallback);
+        }
       }}
     />
   );
@@ -96,8 +292,8 @@ function SafeImage({ src, alt, className = "", fallback = FALLBACK_IMAGE }) {
 
 /* =========================================================
    GLOBAL SCROLL PROGRESS
-   - progress bar seperti timeline video di bagian atas
 ========================================================= */
+
 function ScrollProgress() {
   const { scrollYProgress } = useScroll();
 
@@ -236,10 +432,6 @@ function SectionHeader({
   );
 }
 
-/* =========================================================
-   REVEAL
-   - animasi fade-in + slide antar panel
-========================================================= */
 function Reveal({ children, delay = 0, y = 30, className = "" }) {
   return (
     <motion.div
@@ -254,10 +446,6 @@ function Reveal({ children, delay = 0, y = 30, className = "" }) {
   );
 }
 
-/* =========================================================
-   STORYBOARD PANEL
-   - panel utama dengan border tebal, nomor scene, label bawah
-========================================================= */
 function StoryPanel({
   scene = "01",
   title = "",
@@ -271,11 +459,10 @@ function StoryPanel({
     <div
       className={`group relative overflow-hidden rounded-[1.8rem] border-[3px] ${
         dark
-  ? "border-white/15 bg-emerald-950 text-white"
-  : "border-[#173c32]/10 bg-white/90 text-slate-900"
+          ? "border-white/15 bg-emerald-950 text-white"
+          : "border-[#173c32]/10 bg-white/90 text-slate-900"
       } shadow-[0_20px_55px_rgba(0,0,0,0.12)] backdrop-blur-xl ${className}`}
     >
-      {/* header storyboard */}
       <div
         className={`flex items-center justify-between border-b-[3px] px-4 py-3 sm:px-5 ${
           dark ? "border-white/10 bg-black/20" : "border-slate-200 bg-slate-50"
@@ -300,7 +487,6 @@ function StoryPanel({
         <FaFilm className={dark ? "text-yellow-300" : "text-emerald-700"} />
       </div>
 
-      {/* body */}
       <div className="relative p-4 sm:p-5 lg:p-6">
         {title && (
           <h3
@@ -315,10 +501,11 @@ function StoryPanel({
         {children}
       </div>
 
-      {/* footer storyboard */}
       <div
         className={`border-t-[3px] px-4 py-3 text-[11px] font-black uppercase tracking-[0.2em] sm:px-5 ${
-          dark ? "border-white/10 bg-black/20 text-yellow-300" : "border-slate-200 bg-slate-50 text-emerald-800"
+          dark
+            ? "border-white/10 bg-black/20 text-yellow-300"
+            : "border-slate-200 bg-slate-50 text-emerald-800"
         }`}
       >
         {footerLabel}
@@ -328,15 +515,15 @@ function StoryPanel({
 }
 
 /* =========================================================
-   LOADING CLAPPERBOARD
+   LOADING
 ========================================================= */
+
 function LoadingPage() {
   return (
     <main className="relative flex min-h-[100svh] items-center justify-center overflow-hidden bg-[#071a15] text-white">
       <IslamicBackground dark />
 
       <div className="relative z-10 text-center">
-        {/* Animasi clapperboard */}
         <motion.div
           initial={{ opacity: 0, scale: 0.88 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -351,7 +538,7 @@ function LoadingPage() {
         </motion.div>
 
         <p className="text-sm font-black uppercase tracking-[0.34em] text-yellow-300">
-          Loading Storyboard
+          Pondok Pesantren Al-Furqon
         </p>
 
         <h1 className="mt-4 text-3xl font-black sm:text-5xl">
@@ -371,102 +558,12 @@ function LoadingPage() {
 }
 
 /* =========================================================
-   MAINTENANCE PAGE
-========================================================= */
-function ProgramMaintenance({ onRetry, checking }) {
-  return (
-    <main className="relative min-h-[100svh] overflow-hidden bg-[#071a15] text-white">
-      <div className="absolute inset-0">
-        <SafeImage
-          src="/hero-santri.jpg"
-          alt="Maintenance Program"
-          className="h-full w-full object-cover opacity-30"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#071a15] via-[#0b2f25]/95 to-[#071a15]" />
-        <div className="absolute inset-0 bg-black/55" />
-      </div>
-
-      <IslamicBackground dark />
-
-      <motion.div
-        animate={{ rotate: [0, 360] }}
-        transition={{ duration: 38, repeat: Infinity, ease: "linear" }}
-        className="absolute left-1/2 top-1/2 h-[560px] w-[560px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-yellow-300/10"
-      />
-
-      <div className="relative z-10 mx-auto flex min-h-[100svh] w-[92vw] max-w-5xl flex-col items-center justify-center py-20 text-center">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.88, y: 25 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-[2rem] border border-yellow-300/30 bg-yellow-300/10 text-4xl text-yellow-300 shadow-[0_0_70px_rgba(250,204,21,0.22)] backdrop-blur-xl">
-            <FaWrench />
-          </div>
-
-          <p className="mt-8 text-lg leading-loose text-yellow-300 sm:text-xl lg:text-2xl">
-            إِنَّ مَعَ الْعُسْرِ يُسْرًا
-          </p>
-
-          <div className="mt-3">
-            <Badge light>Program Maintenance</Badge>
-          </div>
-
-          <h1 className="mt-5 text-[clamp(2.4rem,8vw,6.5rem)] font-black leading-[0.92] tracking-[-0.065em]">
-            Data program sedang
-            <span className="block bg-gradient-to-r from-yellow-300 via-yellow-400 to-emerald-200 bg-clip-text text-transparent">
-              tidak tersedia.
-            </span>
-          </h1>
-
-          <p className="mx-auto mt-6 max-w-3xl text-sm leading-relaxed text-emerald-100 sm:text-base lg:text-xl">
-            Backend Express.js belum berjalan atau endpoint{" "}
-            <span className="font-black text-yellow-300">/api/program</span>{" "}
-            belum dapat dihubungi.
-          </p>
-        </motion.div>
-
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-          <button
-            onClick={onRetry}
-            disabled={checking}
-            className="group inline-flex items-center justify-center gap-3 rounded-full bg-yellow-400 px-8 py-4 font-black text-emerald-950 shadow-[0_0_50px_rgba(250,204,21,0.35)] transition hover:-translate-y-1 hover:bg-yellow-300 disabled:opacity-70"
-          >
-            <motion.span
-              animate={checking ? { rotate: 360 } : { rotate: 0 }}
-              transition={{
-                repeat: checking ? Infinity : 0,
-                duration: 1,
-                ease: "linear",
-              }}
-            >
-              <FaRotateRight />
-            </motion.span>
-            {checking ? "Mengecek Backend..." : "Coba Lagi"}
-          </button>
-
-          <a
-            href="http://localhost:5000/api/program"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/10 px-8 py-4 font-black text-white backdrop-blur transition hover:-translate-y-1 hover:bg-white/20"
-          >
-            Cek API Program
-          </a>
-        </div>
-      </div>
-    </main>
-  );
-}
-
-/* =========================================================
    MAIN PAGE
 ========================================================= */
 
 export default function Program() {
-  const [programPage, setProgramPage] = useState(null);
+  const [programPage, setProgramPage] = useState(DEFAULT_PROGRAM_DATA);
   const [loading, setLoading] = useState(true);
-  const [maintenance, setMaintenance] = useState(false);
   const [checking, setChecking] = useState(false);
 
   const [activeProgram, setActiveProgram] = useState(0);
@@ -489,10 +586,6 @@ export default function Program() {
     []
   );
 
-  /* ==========================================
-     HERO PARALLAX
-     - efek kamera bergerak / zoom cinematic
-  ========================================== */
   const heroImageScale = useTransform(scrollY, [0, 900], [1, 1.18]);
   const heroTextY = useTransform(scrollY, [0, 900], [0, 120]);
   const heroOverlayOpacity = useTransform(scrollY, [0, 900], [0.38, 0.82]);
@@ -500,7 +593,6 @@ export default function Program() {
   const fetchProgramData = async () => {
     try {
       setChecking(true);
-      setMaintenance(false);
 
       if (!API_URL) {
         throw new Error("NEXT_PUBLIC_API_URL belum diatur");
@@ -520,14 +612,18 @@ export default function Program() {
         throw new Error("Format data program tidak valid");
       }
 
-      setProgramPage(result.data);
-      setMaintenance(false);
+      const normalizedData = normalizeProgramData(result.data);
+
+      setProgramPage(normalizedData);
       setActiveProgram(0);
       setCurrentGallery(0);
     } catch (error) {
       console.error("PROGRAM BACKEND ERROR:", error.message);
-      setProgramPage(null);
-      setMaintenance(true);
+
+      // PENTING:
+      // Jangan masuk maintenance.
+      // Kalau backend gagal, halaman tetap tampil pakai data default.
+      setProgramPage(DEFAULT_PROGRAM_DATA);
     } finally {
       setLoading(false);
       setChecking(false);
@@ -538,10 +634,6 @@ export default function Program() {
     fetchProgramData();
   }, []);
 
-  /* ==========================================
-     AUTO GALLERY
-     - pergantian scene otomatis seperti slideshow film
-  ========================================== */
   useEffect(() => {
     if (!programPage?.gallery?.length) return;
 
@@ -552,13 +644,14 @@ export default function Program() {
     return () => clearInterval(interval);
   }, [programPage]);
 
-  if (loading) return <LoadingPage />;
-  if (maintenance || !programPage) {
-    return <ProgramMaintenance onRetry={fetchProgramData} checking={checking} />;
+  if (loading && checking) {
+    return <LoadingPage />;
   }
 
+  const safeProgramPage = normalizeProgramData(programPage);
+
   const { hero, programs, stats, timeline, gallery, advantages, faq } =
-    programPage;
+    safeProgramPage;
 
   const active = programs[activeProgram] || programs[0];
 
@@ -567,7 +660,6 @@ export default function Program() {
       <ScrollProgress />
       <Navbar />
 
-      {/* MINI STORYBOARD NAV */}
       <div className="pointer-events-none fixed right-4 top-1/2 z-40 hidden -translate-y-1/2 xl:block">
         <div className="pointer-events-auto rounded-[1.8rem] border-[3px] border-white/10 bg-[#071a15]/80 p-3 shadow-2xl backdrop-blur-xl">
           <p className="mb-3 text-center text-[10px] font-black uppercase tracking-[0.3em] text-yellow-300">
@@ -584,6 +676,7 @@ export default function Program() {
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-yellow-400 text-[10px] font-black text-emerald-950">
                   {item.number}
                 </div>
+
                 <span className="text-xs font-bold text-white">
                   {item.label}
                 </span>
@@ -593,11 +686,10 @@ export default function Program() {
         </div>
       </div>
 
-      {/* ======================================================
-         HERO
-      ====================================================== */}
+      {/* HERO */}
       <Section id="hero" dark>
         <div className="absolute inset-0 bg-gradient-to-r from-[#041b15] via-[#062d22]/95 to-[#0d4f38]/45" />
+
         <motion.div style={{ scale: heroImageScale }} className="absolute inset-0">
           <SafeImage
             src={hero.image}
@@ -610,6 +702,7 @@ export default function Program() {
           style={{ opacity: heroOverlayOpacity }}
           className="absolute inset-0 bg-gradient-to-r from-[#071a15] via-[#0b2c23]/90 to-[#0e553f]/35"
         />
+
         <div className="absolute inset-0 bg-black/45" />
 
         <IslamicBackground dark />
@@ -639,7 +732,7 @@ export default function Program() {
               <div className="mt-7 flex flex-col gap-3 sm:flex-row">
                 <a href="#program-showcase">
                   <button className="group inline-flex w-full items-center justify-center gap-3 rounded-full bg-yellow-400 px-7 py-3.5 font-black text-emerald-950 shadow-2xl transition hover:-translate-y-1 hover:bg-yellow-300 sm:w-auto">
-                    Jelajahi Scene Program
+                    Jelajahi Program
                     <FaArrowRight className="transition group-hover:translate-x-1" />
                   </button>
                 </a>
@@ -650,19 +743,28 @@ export default function Program() {
                     Lihat Galeri
                   </button>
                 </a>
+
+                <a
+                  href={WHATSAPP_ADMIN_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex w-full items-center justify-center gap-3 rounded-full border border-white/25 bg-white/10 px-7 py-3.5 font-bold text-white backdrop-blur transition hover:bg-white/20 sm:w-auto"
+                >
+                  Hubungi Admin
+                </a>
               </div>
 
               <div className="mt-7 hidden border-l-4 border-yellow-400 pl-6 md:block">
                 <p className="text-xl leading-loose text-yellow-300 lg:text-2xl">
                   {hero.arabic}
                 </p>
+
                 <p className="mt-1 text-xs font-bold uppercase tracking-[0.35em] text-emerald-100">
                   {hero.source}
                 </p>
               </div>
             </motion.div>
 
-            {/* HERO STORYBOARD POSTER */}
             <Reveal delay={0.15} className="hidden lg:block">
               <StoryPanel
                 dark
@@ -686,12 +788,14 @@ export default function Program() {
                       alt="Galeri Program"
                       className="h-[56svh] w-full object-cover"
                     />
+
                     <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
 
                     <div className="absolute bottom-0 left-0 p-6">
                       <p className="text-[10px] font-black uppercase tracking-[0.28em] text-yellow-300">
                         Frame Preview
                       </p>
+
                       <h3 className="mt-2 text-3xl font-black text-white">
                         Pembinaan hidup melalui kegiatan bermakna.
                       </h3>
@@ -704,9 +808,7 @@ export default function Program() {
         </Container>
       </Section>
 
-      {/* ======================================================
-         STATS - STORYBOARD GRID
-      ====================================================== */}
+      {/* STATS */}
       <Section
         id="stats"
         className="bg-gradient-to-br from-[#f6f1e4] via-white to-emerald-50"
@@ -715,9 +817,9 @@ export default function Program() {
 
         <Container className="flex min-h-[100svh] flex-col justify-center">
           <SectionHeader
-            badge="Storyboard Metrics"
+            badge="Program Pesantren"
             title="Program yang tumbuh bersama santri"
-            desc="Panel statistik ini disusun seperti frame storyboard untuk menampilkan gambaran besar pembinaan."
+            desc="Program pembinaan dirancang untuk mendukung perkembangan ilmu, adab, ibadah, kedisiplinan, dan kemandirian santri."
           />
 
           <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -748,13 +850,8 @@ export default function Program() {
         </Container>
       </Section>
 
-      {/* ======================================================
-         PROGRAM SHOWCASE
-      ====================================================== */}
-      <Section
-        id="program-showcase"
-        className="scroll-mt-24 bg-[#f6f1e4]"
-      >
+      {/* PROGRAM SHOWCASE */}
+      <Section id="program-showcase" className="scroll-mt-24 bg-[#f6f1e4]">
         <IslamicBackground />
 
         <Container className="flex min-h-[100svh] items-center">
@@ -762,15 +859,15 @@ export default function Program() {
             <div>
               <SectionHeader
                 align="left"
-                badge="Scene Selector"
-                title="Pilih program dan lihat detail adegannya"
-                desc="Layout dibuat seperti panel storyboard. Klik salah satu scene program untuk melihat sorotan utamanya."
+                badge="Pilihan Program"
+                title="Pilih program dan lihat detail pembinaannya"
+                desc="Setiap program memiliki tujuan pembinaan yang saling melengkapi untuk membentuk karakter santri."
               />
 
-              {/* MOBILE GRID SELECTOR */}
               <div className="mt-5 grid grid-cols-2 gap-3 lg:hidden">
                 {programs.map((item, index) => (
                   <button
+                    type="button"
                     key={item.title}
                     onClick={() => setActiveProgram(index)}
                     className={`rounded-[1.4rem] border-[3px] p-3 text-left transition ${
@@ -790,8 +887,9 @@ export default function Program() {
                     </div>
 
                     <p className="text-[10px] font-black uppercase tracking-[0.22em] opacity-70">
-                      Scene {String(index + 1).padStart(2, "0")}
+                      Program {String(index + 1).padStart(2, "0")}
                     </p>
+
                     <p className="mt-1 text-sm font-black leading-tight">
                       {item.title}
                     </p>
@@ -799,10 +897,10 @@ export default function Program() {
                 ))}
               </div>
 
-              {/* DESKTOP SELECTOR */}
               <div className="mt-6 hidden gap-3 lg:grid">
                 {programs.map((item, index) => (
                   <button
+                    type="button"
                     key={item.title}
                     onClick={() => setActiveProgram(index)}
                     className={`group rounded-[1.6rem] border-[3px] p-4 text-left transition ${
@@ -830,7 +928,7 @@ export default function Program() {
                               : "text-emerald-700"
                           }`}
                         >
-                          Scene {String(index + 1).padStart(2, "0")} •{" "}
+                          Program {String(index + 1).padStart(2, "0")} •{" "}
                           {item.subtitle}
                         </p>
 
@@ -844,7 +942,6 @@ export default function Program() {
               </div>
             </div>
 
-            {/* ACTIVE PROGRAM STORY PANEL */}
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeProgram}
@@ -858,7 +955,7 @@ export default function Program() {
                   scene={String(activeProgram + 1).padStart(2, "0")}
                   subtitle={active.subtitle}
                   title={active.title}
-                  footerLabel="Program Focus Scene"
+                  footerLabel="Program Focus"
                 >
                   <div className="relative h-[260px] overflow-hidden rounded-[1.35rem] sm:h-[340px] lg:h-[48svh]">
                     <motion.div
@@ -889,8 +986,8 @@ export default function Program() {
                   <div className="mt-5 grid gap-4 md:grid-cols-[1.08fr_0.92fr]">
                     <div>
                       <p className="text-sm font-semibold leading-relaxed text-white sm:text-base">
-  {active.longDesc}
-</p>
+                        {active.longDesc}
+                      </p>
 
                       <Link href="/pendaftaran">
                         <button className="mt-5 inline-flex items-center gap-3 rounded-full bg-yellow-400 px-5 py-3 text-sm font-black text-emerald-950 transition hover:bg-yellow-300 sm:px-6 sm:text-base">
@@ -907,11 +1004,13 @@ export default function Program() {
                           className="rounded-2xl border-[2px] border-white/10 bg-white/10 p-3 text-center backdrop-blur"
                         >
                           <FaCircleCheck className="mx-auto mb-2 text-yellow-300" />
+
                           <p className="text-[11px] font-bold text-white sm:text-sm">
                             {feature}
                           </p>
+
                           <p className="mt-1 text-[9px] uppercase tracking-[0.18em] text-emerald-100/70">
-                            Beat {idx + 1}
+                            Poin {idx + 1}
                           </p>
                         </div>
                       ))}
@@ -924,18 +1023,16 @@ export default function Program() {
         </Container>
       </Section>
 
-      {/* ======================================================
-         DETAIL PROGRAM GRID - seperti storyboard comic grid
-      ====================================================== */}
+      {/* DETAIL PROGRAM */}
       <Section id="detail-program" dark>
         <IslamicBackground dark />
 
         <Container className="flex min-h-[100svh] flex-col justify-center">
           <SectionHeader
             light
-            badge="Storyboard Grid"
-            title="Detail program dalam panel-panel adegan"
-            desc="Bagian ini menggunakan format grid seperti komik / storyboard agar informasi terasa lebih visual."
+            badge="Detail Program"
+            title="Detail program dalam panel pembinaan"
+            desc="Bagian ini menampilkan gambaran program secara visual agar calon santri dan wali santri lebih mudah memahami."
           />
 
           <div className="mt-8 grid gap-4 lg:grid-cols-3">
@@ -956,6 +1053,7 @@ export default function Program() {
                         alt={item.title}
                         className="h-full w-full object-cover"
                       />
+
                       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/15 to-transparent" />
 
                       <div className="absolute bottom-3 left-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-yellow-400 text-lg text-emerald-950 lg:h-12 lg:w-12">
@@ -995,9 +1093,7 @@ export default function Program() {
         </Container>
       </Section>
 
-      {/* ======================================================
-         TIMELINE
-      ====================================================== */}
+      {/* TIMELINE */}
       <Section
         id="timeline-program"
         className="bg-gradient-to-br from-[#f6f1e4] via-white to-emerald-50"
@@ -1006,9 +1102,9 @@ export default function Program() {
 
         <Container className="flex min-h-[100svh] flex-col justify-center">
           <SectionHeader
-            badge="Timeline Story"
+            badge="Alur Pembinaan"
             title="Alur pembinaan seperti perjalanan cerita"
-            desc="Timeline ini berfungsi seperti urutan scene dalam film, dari awal pembinaan hingga pembentukan karakter."
+            desc="Timeline ini menunjukkan proses bertahap dari awal santri mengenal pesantren sampai terbentuknya karakter mandiri."
           />
 
           <div className="mt-10 grid gap-4 lg:grid-cols-2">
@@ -1016,7 +1112,7 @@ export default function Program() {
               <Reveal key={item.number} delay={index * 0.08}>
                 <StoryPanel
                   scene={item.number}
-                  subtitle="Timeline Beat"
+                  subtitle="Timeline"
                   title={item.title}
                   footerLabel={`Step ${item.number}`}
                 >
@@ -1038,9 +1134,7 @@ export default function Program() {
         </Container>
       </Section>
 
-      {/* ======================================================
-         GALLERY
-      ====================================================== */}
+      {/* GALLERY */}
       <Section id="galeri" dark className="scroll-mt-24">
         <IslamicBackground dark />
 
@@ -1049,16 +1143,16 @@ export default function Program() {
             <SectionHeader
               light
               align="left"
-              badge="Gallery Frames"
+              badge="Galeri Program"
               title="Suasana pembinaan santri yang hidup"
-              desc="Galeri ini disusun seperti kumpulan frame sinematik agar pengunjung merasa sedang melihat potongan adegan."
+              desc="Galeri ini menampilkan suasana kegiatan dan lingkungan pembinaan santri di pesantren."
             />
 
             <div className="grid gap-4">
               <StoryPanel
                 dark
                 scene="06"
-                subtitle="Gallery Scene"
+                subtitle="Gallery"
                 title=""
                 footerLabel="Moving Frames"
               >
@@ -1076,12 +1170,14 @@ export default function Program() {
                       alt="Galeri Program"
                       className="h-[360px] w-full object-cover sm:h-[420px] lg:h-[54svh]"
                     />
+
                     <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent" />
 
                     <div className="absolute bottom-0 left-0 p-6">
                       <p className="text-xs font-black uppercase tracking-[0.3em] text-yellow-300">
                         Galeri Program
                       </p>
+
                       <h3 className="mt-2 text-3xl font-black text-white sm:text-5xl">
                         Kegiatan Santri
                       </h3>
@@ -1092,6 +1188,7 @@ export default function Program() {
                 <div className="mt-4 grid grid-cols-3 gap-2 sm:grid-cols-6">
                   {gallery.map((img, index) => (
                     <button
+                      type="button"
                       key={index}
                       onClick={() => setCurrentGallery(index)}
                       className={`group overflow-hidden rounded-xl border-[2px] p-1 transition ${
@@ -1114,17 +1211,15 @@ export default function Program() {
         </Container>
       </Section>
 
-      {/* ======================================================
-         ADVANTAGES
-      ====================================================== */}
+      {/* ADVANTAGES */}
       <Section className="bg-gradient-to-br from-[#f6f1e4] via-white to-emerald-50">
         <IslamicBackground />
 
         <Container className="flex min-h-[100svh] flex-col justify-center">
           <SectionHeader
-            badge="Highlights"
+            badge="Keunggulan"
             title="Mengapa program pembinaan ini penting?"
-            desc="Program bukan hanya aktivitas tambahan, tetapi bagian dari proses pembentukan karakter santri."
+            desc="Program bukan hanya aktivitas tambahan, tetapi bagian dari proses pembentukan ilmu, adab, dan kemandirian santri."
           />
 
           <div className="mt-8 grid gap-5 md:grid-cols-3">
@@ -1132,7 +1227,7 @@ export default function Program() {
               <Reveal key={item.title} delay={index * 0.06}>
                 <StoryPanel
                   scene={`A${index + 1}`}
-                  subtitle="Key Highlight"
+                  subtitle="Highlight"
                   title={item.title}
                   footerLabel="Highlight Panel"
                   className="h-full"
@@ -1151,9 +1246,7 @@ export default function Program() {
         </Container>
       </Section>
 
-      {/* ======================================================
-         FAQ
-      ====================================================== */}
+      {/* FAQ */}
       <Section id="faq" dark>
         <IslamicBackground dark />
 
@@ -1162,9 +1255,9 @@ export default function Program() {
             <SectionHeader
               light
               align="left"
-              badge="Frequently Asked Scenes"
+              badge="FAQ Program"
               title="Informasi yang sering ditanyakan"
-              desc="Bagian ini membantu calon santri dan orang tua memahami program pembinaan dengan lebih jelas."
+              desc="Bagian ini membantu calon santri dan wali santri memahami program pembinaan dengan lebih jelas."
             />
 
             <div className="space-y-3">
@@ -1177,13 +1270,15 @@ export default function Program() {
                     className="overflow-hidden rounded-[1.5rem] border-[3px] border-white/10 bg-white/10 backdrop-blur-xl"
                   >
                     <button
+                      type="button"
                       onClick={() => setOpenFaq(open ? null : index)}
                       className="flex w-full items-center justify-between gap-5 border-b-[3px] border-white/10 px-5 py-5 text-left"
                     >
                       <div>
                         <p className="mb-1 text-[10px] font-black uppercase tracking-[0.22em] text-yellow-300">
-                          Scene Q{index + 1}
+                          Pertanyaan {index + 1}
                         </p>
+
                         <h3 className="text-base font-black text-white sm:text-lg">
                           {item.q}
                         </h3>
@@ -1222,91 +1317,96 @@ export default function Program() {
         </Container>
       </Section>
 
-      {/* ======================================================
-   CTA / ENDING
-====================================================== */}
-<Section
-  id="closing-scene"
-  dark
-  className="bg-gradient-to-br from-[#f6f1e4] via-white to-emerald-50"
->
-  <IslamicBackground dark />
+      {/* CTA */}
+      <Section
+        id="closing-scene"
+        dark
+        className="bg-gradient-to-br from-[#f6f1e4] via-white to-emerald-50"
+      >
+        <IslamicBackground dark />
 
-  <Container className="flex min-h-[100svh] items-center justify-center text-center px-4">
-    <motion.div
-      initial={{ opacity: 0, y: 45, scale: 0.96 }}
-      whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true, amount: 0.25 }}
-      transition={{ duration: 0.7 }}
-      className="mx-auto w-full max-w-6xl"
-    >
-      <div className="rounded-[1.8rem] border-[3px] border-white/15 bg-emerald-950/95 text-white shadow-[0_25px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl overflow-hidden">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b-[3px] border-white/10 bg-black/20 px-4 py-3 sm:px-5">
-          <div className="flex items-center gap-3">
-            <div className="rounded-full bg-yellow-400 px-3 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-emerald-950">
-              Scene 08
+        <Container className="flex min-h-[100svh] items-center justify-center px-4 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 45, scale: 0.96 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, amount: 0.25 }}
+            transition={{ duration: 0.7 }}
+            className="mx-auto w-full max-w-6xl"
+          >
+            <div className="overflow-hidden rounded-[1.8rem] border-[3px] border-white/15 bg-emerald-950/95 text-white shadow-[0_25px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl">
+              <div className="flex items-center justify-between border-b-[3px] border-white/10 bg-black/20 px-4 py-3 sm:px-5">
+                <div className="flex items-center gap-3">
+                  <div className="rounded-full bg-yellow-400 px-3 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-emerald-950">
+                    Scene 08
+                  </div>
+
+                  <p className="text-[10px] font-black uppercase tracking-[0.22em] text-emerald-100/80">
+                    Final Scene
+                  </p>
+                </div>
+
+                <FaFilm className="text-yellow-300" />
+              </div>
+
+              <div className="relative px-5 py-10 sm:px-8 sm:py-14 lg:px-12 lg:py-16">
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-yellow-300/10 via-transparent to-emerald-300/10" />
+
+                <div className="relative z-10">
+                  <h2 className="mx-auto max-w-4xl text-[clamp(2rem,5vw,4.8rem)] font-black leading-[1.02] tracking-[-0.05em] text-white">
+                    Mulai perjalanan santri melalui program yang aktif dan
+                    bermakna.
+                  </h2>
+
+                  <p className="mx-auto mt-6 max-w-3xl text-sm leading-relaxed text-emerald-50 sm:text-base lg:text-lg">
+                    Daftarkan calon santri sekarang dan ikuti proses pendidikan
+                    yang membangun ilmu, adab, keberanian, dan kemandirian.
+                  </p>
+
+                  <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
+                    <Link href="/pendaftaran">
+                      <button className="inline-flex w-full items-center justify-center gap-3 rounded-full bg-yellow-400 px-8 py-4 font-black text-emerald-950 shadow-[0_12px_35px_rgba(250,204,21,0.25)] transition hover:-translate-y-1 hover:bg-yellow-300 sm:w-auto">
+                        Daftar Sekarang
+                        <FaArrowRight />
+                      </button>
+                    </Link>
+
+                    <Link href="/pendidikan">
+                      <button className="w-full rounded-full border border-white/30 bg-white/10 px-8 py-4 font-black text-white backdrop-blur transition hover:-translate-y-1 hover:bg-white/20 sm:w-auto">
+                        Lihat Pendidikan
+                      </button>
+                    </Link>
+
+                    <a
+                      href={WHATSAPP_ADMIN_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex w-full items-center justify-center rounded-full border border-white/30 bg-white/10 px-8 py-4 font-black text-white backdrop-blur transition hover:-translate-y-1 hover:bg-white/20 sm:w-auto"
+                    >
+                      Hubungi Admin
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-t-[3px] border-white/10 bg-black/20 px-4 py-3 text-[11px] font-black uppercase tracking-[0.2em] text-yellow-300 sm:px-5">
+                Closing Scene
+              </div>
             </div>
-
-            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-emerald-100/80">
-              Final Scene
-            </p>
-          </div>
-
-          <FaFilm className="text-yellow-300" />
-        </div>
-
-        {/* Body */}
-        <div className="relative px-5 py-10 sm:px-8 sm:py-14 lg:px-12 lg:py-16">
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-yellow-300/10 via-transparent to-emerald-300/10" />
-
-          <div className="relative z-10">
-            <h2 className="mx-auto max-w-4xl text-[clamp(2rem,5vw,4.8rem)] font-black leading-[1.02] tracking-[-0.05em] text-white">
-              Mulai perjalanan santri melalui program yang aktif dan bermakna.
-            </h2>
-
-            <p className="mx-auto mt-6 max-w-3xl text-sm leading-relaxed text-emerald-50 sm:text-base lg:text-lg">
-              Daftarkan calon santri sekarang dan ikuti proses pendidikan yang
-              membangun ilmu, adab, keberanian, dan kemandirian.
-            </p>
-
-            <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
-              <Link href="/pendaftaran">
-                <button className="inline-flex w-full items-center justify-center gap-3 rounded-full bg-yellow-400 px-8 py-4 font-black text-emerald-950 shadow-[0_12px_35px_rgba(250,204,21,0.25)] transition hover:-translate-y-1 hover:bg-yellow-300 sm:w-auto">
-                  Daftar Sekarang
-                  <FaArrowRight />
-                </button>
-              </Link>
-
-              <Link href="/pendidikan">
-                <button className="w-full rounded-full border border-white/30 bg-white/10 px-8 py-4 font-black text-white backdrop-blur transition hover:-translate-y-1 hover:bg-white/20 sm:w-auto">
-                  Lihat Pendidikan
-                </button>
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="border-t-[3px] border-white/10 bg-black/20 px-4 py-3 text-[11px] font-black uppercase tracking-[0.2em] text-yellow-300 sm:px-5">
-          Closing Scene
-        </div>
-      </div>
-    </motion.div>
-  </Container>
-</Section>
+          </motion.div>
+        </Container>
+      </Section>
 
       <Footer />
 
-      {/* ======================================================
-         GLOBAL STYLE
-         - font feel kreatif / film
-         - smooth scroll
-         - utility kecil untuk cinematic feel
-      ====================================================== */}
       <style jsx global>{`
         html {
           scroll-behavior: smooth;
+        }
+
+        html,
+        body {
+          max-width: 100%;
+          overflow-x: hidden;
         }
 
         body {
@@ -1321,6 +1421,12 @@ export default function Program() {
         .story-caption {
           font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
             "Liberation Mono", "Courier New", monospace;
+        }
+
+        @media (max-width: 768px) {
+          html {
+            scroll-behavior: auto;
+          }
         }
       `}</style>
     </main>
