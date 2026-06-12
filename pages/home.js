@@ -696,14 +696,20 @@ function MaintenancePage({ onRetry, checking }) {
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           transition={{ delay: 0.35, duration: 0.8 }}
         >
-          <Badge light>Website Maintenance</Badge>
+          <Badge light>Website Resmi Pesantren</Badge>
 
-          <h1 className="mt-5 text-[clamp(2.4rem,8vw,6.5rem)] font-black leading-[0.92] tracking-[-0.065em]">
-            Sistem sedang
-            <span className="block bg-gradient-to-r from-yellow-300 via-yellow-400 to-emerald-200 bg-clip-text text-transparent">
-              dalam perawatan.
-            </span>
-          </h1>
+<h1 className="mt-5 text-[clamp(2.4rem,8vw,6.5rem)] font-black leading-[0.92] tracking-[-0.065em]">
+  Selamat Datang di
+  <span className="block bg-gradient-to-r from-yellow-300 via-yellow-400 to-emerald-200 bg-clip-text text-transparent">
+    Al-Furqon.
+  </span>
+</h1>
+
+<p className="mt-6 max-w-2xl text-base leading-relaxed text-emerald-50/80 sm:text-lg lg:text-xl">
+  Website resmi Pondok Pesantren Al-Furqon sebagai pusat informasi
+  pendidikan, pendaftaran santri, kegiatan pesantren, dan layanan digital
+  untuk santri serta wali santri.
+</p>
 
           <p className="mx-auto mt-6 max-w-3xl text-sm leading-relaxed text-emerald-100 sm:text-base lg:text-xl">
   Assalamu’alaikum, Santri Al-Furqon. Informasi pondok sedang dipersiapkan
