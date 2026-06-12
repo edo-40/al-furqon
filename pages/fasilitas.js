@@ -30,38 +30,198 @@ import {
   FaQuran,
   FaCheckCircle,
   FaMapMarkedAlt,
-  FaRedo,
-  FaWrench,
   FaPlay,
   FaCompass,
   FaHandSparkles,
   FaLayerGroup,
-  FaQuoteLeft,
 } from "react-icons/fa";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
 const FALLBACK_IMAGE = "/hero-santri.jpg";
 
-/* =========================================================
-   WHATSAPP ADMIN
-   Ganti nomor di bawah dengan nomor admin pesantren.
-   Format wajib: kode negara + nomor, tanpa 0, tanpa +, tanpa spasi.
-   Contoh:
-   0812-3456-7890 menjadi 6281234567890
-========================================================= */
-
 const ADMIN_WHATSAPP_NUMBER = "6283899601027";
 
 const ADMIN_WHATSAPP_MESSAGE =
-  "Assalamu'alaikum Admin Pesantren Al-Furqon, saya ingin bertanya mengenai pesantren.";
+  "Assalamu'alaikum Admin Pesantren Al-Furqon, saya ingin bertanya mengenai fasilitas pesantren.";
 
 const WHATSAPP_ADMIN_URL = `https://wa.me/${ADMIN_WHATSAPP_NUMBER}?text=${encodeURIComponent(
   ADMIN_WHATSAPP_MESSAGE
 )}`;
 
-/* =========================================================
-   RESPONSIVE HELPER
-========================================================= */
+const DEFAULT_FASILITAS_DATA = {
+  hero: {
+    arabic: "وَقُلْ رَبِّ زِدْنِي عِلْمًا",
+    badge: "Fasilitas Pesantren",
+    title: "Lingkungan nyaman",
+    highlight: "untuk tumbuhnya santri.",
+    desc: "Fasilitas Pondok Pesantren Al-Furqon disiapkan untuk mendukung ibadah, belajar, istirahat, pembinaan karakter, dan kehidupan santri yang lebih terarah.",
+    image: "/hero-santri.jpg",
+  },
+
+  stats: [
+    {
+      value: "Masjid",
+      label: "Pusat ibadah santri",
+    },
+    {
+      value: "Asrama",
+      label: "Tempat tinggal santri",
+    },
+    {
+      value: "Kelas",
+      label: "Ruang belajar terarah",
+    },
+    {
+      value: "Aman",
+      label: "Lingkungan terjaga",
+    },
+  ],
+
+  featuredInfo: {
+    badge: "Fasilitas Unggulan",
+    title: "Setiap ruang mendukung proses pembinaan santri",
+    desc: "Fasilitas pesantren bukan hanya bangunan, tetapi bagian dari lingkungan pendidikan yang membentuk kebiasaan, adab, disiplin, dan kemandirian santri.",
+  },
+
+  featuredCards: [
+    {
+      title: "Mendukung Ibadah",
+      desc: "Masjid dan lingkungan pesantren membantu santri terbiasa beribadah secara berjamaah dan terarah.",
+      iconKey: "mosque",
+    },
+    {
+      title: "Mendukung Belajar",
+      desc: "Ruang belajar dan kelas digunakan untuk kegiatan pendidikan formal maupun pembinaan pesantren.",
+      iconKey: "book",
+    },
+    {
+      title: "Mendukung Kemandirian",
+      desc: "Asrama dan lingkungan harian melatih santri untuk disiplin, rapi, peduli, dan bertanggung jawab.",
+      iconKey: "bed",
+    },
+    {
+      title: "Mendukung Keamanan",
+      desc: "Lingkungan pesantren diarahkan agar santri dapat menjalani kegiatan dengan lebih aman dan tertib.",
+      iconKey: "shield",
+    },
+  ],
+
+  qualities: ["Aman", "Nyaman", "Terarah", "Islami"],
+
+  facilities: [
+    {
+      id: "masjid",
+      name: "Masjid Pesantren",
+      category: "Ibadah",
+      desc: "Masjid menjadi pusat kegiatan ibadah, kajian, pembinaan rohani, dan kebersamaan santri.",
+      detail:
+        "Masjid pesantren digunakan untuk shalat berjamaah, membaca Al-Qur'an, kajian, dzikir, dan berbagai kegiatan keislaman. Fasilitas ini menjadi pusat pembentukan kebiasaan ibadah santri.",
+      img: "/hero-santri.jpg",
+      iconKey: "mosque",
+      featured: true,
+    },
+    {
+      id: "asrama",
+      name: "Asrama Santri",
+      category: "Hunian",
+      desc: "Asrama menjadi tempat tinggal santri yang membantu membentuk kedisiplinan, kerapian, dan kemandirian.",
+      detail:
+        "Asrama membantu santri belajar hidup mandiri, menjaga kebersihan, mengatur waktu, dan berinteraksi dengan teman dalam lingkungan yang terarah.",
+      img: "/hero-santri.jpg",
+      iconKey: "bed",
+      featured: false,
+    },
+    {
+      id: "kelas",
+      name: "Ruang Kelas",
+      category: "Pendidikan",
+      desc: "Ruang kelas digunakan untuk kegiatan belajar yang mendukung ilmu agama dan ilmu umum.",
+      detail:
+        "Ruang kelas menjadi tempat santri mengikuti pembelajaran formal dan pembinaan akademik agar proses belajar berjalan lebih nyaman dan terstruktur.",
+      img: "/smk.jpg",
+      iconKey: "book",
+      featured: false,
+    },
+    {
+      id: "alquran",
+      name: "Ruang Al-Qur'an",
+      category: "Ibadah",
+      desc: "Ruang pembinaan Al-Qur'an membantu santri memperbaiki bacaan, menghafal, dan murajaah.",
+      detail:
+        "Fasilitas ini mendukung kegiatan tahsin, tahfidz, murajaah, dan pembiasaan santri agar lebih dekat dengan Al-Qur'an.",
+      img: "/hero-santri.jpg",
+      iconKey: "quran",
+      featured: false,
+    },
+    {
+      id: "lapangan",
+      name: "Area Aktivitas",
+      category: "Aktivitas",
+      desc: "Area aktivitas digunakan untuk olahraga, kegiatan bersama, dan pembinaan fisik santri.",
+      detail:
+        "Area aktivitas membantu santri menjaga kesehatan, kerja sama, sportivitas, dan semangat kebersamaan di lingkungan pesantren.",
+      img: "/hero-santri.jpg",
+      iconKey: "sport",
+      featured: false,
+    },
+    {
+      id: "lingkungan",
+      name: "Lingkungan Pesantren",
+      category: "Lingkungan",
+      desc: "Lingkungan pesantren diarahkan agar santri merasa aman, nyaman, dan fokus menjalani kegiatan.",
+      detail:
+        "Lingkungan yang tertata membantu santri menjalani jadwal harian, belajar, beribadah, dan beristirahat dengan lebih baik.",
+      img: "/hero-santri.jpg",
+      iconKey: "home",
+      featured: false,
+    },
+  ],
+};
+
+function normalizeFasilitasData(data) {
+  if (!data || typeof data !== "object") {
+    return DEFAULT_FASILITAS_DATA;
+  }
+
+  const facilities =
+    Array.isArray(data.facilities) && data.facilities.length
+      ? data.facilities.map((item, index) => ({
+          ...DEFAULT_FASILITAS_DATA.facilities[
+            index % DEFAULT_FASILITAS_DATA.facilities.length
+          ],
+          ...item,
+        }))
+      : DEFAULT_FASILITAS_DATA.facilities;
+
+  return {
+    hero: {
+      ...DEFAULT_FASILITAS_DATA.hero,
+      ...(data.hero || {}),
+    },
+
+    stats:
+      Array.isArray(data.stats) && data.stats.length
+        ? data.stats
+        : DEFAULT_FASILITAS_DATA.stats,
+
+    featuredInfo: {
+      ...DEFAULT_FASILITAS_DATA.featuredInfo,
+      ...(data.featuredInfo || {}),
+    },
+
+    featuredCards:
+      Array.isArray(data.featuredCards) && data.featuredCards.length
+        ? data.featuredCards
+        : DEFAULT_FASILITAS_DATA.featuredCards,
+
+    qualities:
+      Array.isArray(data.qualities) && data.qualities.length
+        ? data.qualities
+        : DEFAULT_FASILITAS_DATA.qualities,
+
+    facilities,
+  };
+}
 
 function useIsDesktop() {
   const [isDesktop, setIsDesktop] = useState(false);
@@ -90,10 +250,6 @@ function useIsDesktop() {
   return isDesktop;
 }
 
-/* =========================================================
-   ICON MAP
-========================================================= */
-
 function getIcon(key) {
   const icons = {
     mosque: <FaMosque />,
@@ -109,10 +265,6 @@ function getIcon(key) {
 
   return icons[key] || <FaStar />;
 }
-
-/* =========================================================
-   BASIC COMPONENTS
-========================================================= */
 
 function SafeImage({ src, alt, className = "", fallback = FALLBACK_IMAGE }) {
   const [currentSrc, setCurrentSrc] = useState(src || fallback);
@@ -171,6 +323,7 @@ function CursorGlow() {
     };
 
     window.addEventListener("mousemove", handleMove);
+
     return () => window.removeEventListener("mousemove", handleMove);
   }, [isDesktop, shouldReduceMotion, mouseX, mouseY]);
 
@@ -347,18 +500,23 @@ function SectionHeader({ badge, title, desc, light = false, align = "center" }) 
 
 function TiltCard({ children, className = "" }) {
   const isDesktop = useIsDesktop();
-  const [rotate, setRotate] = useState({ x: 0, y: 0 });
+
+  const [rotate, setRotate] = useState({
+    x: 0,
+    y: 0,
+  });
 
   const handleMove = (e) => {
     if (!isDesktop) return;
 
     const rect = e.currentTarget.getBoundingClientRect();
+
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
     setRotate({
-      x: ((y / rect.height) - 0.5) * -8,
-      y: ((x / rect.width) - 0.5) * 8,
+      x: (y / rect.height - 0.5) * -8,
+      y: (x / rect.width - 0.5) * 8,
     });
   };
 
@@ -405,6 +563,7 @@ function MagneticButton({ children, onClick, href, variant = "primary" }) {
 
   const button = (
     <motion.button
+      type="button"
       onClick={onClick}
       onMouseMove={handleMove}
       onMouseLeave={() => {
@@ -482,10 +641,6 @@ function OrbitRings() {
   );
 }
 
-/* =========================================================
-   LOADING & MAINTENANCE
-========================================================= */
-
 function LoadingPage() {
   return (
     <main className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-[#041b15] px-4 text-white">
@@ -503,7 +658,7 @@ function LoadingPage() {
         />
 
         <p className="text-xs font-black uppercase tracking-[0.28em] text-yellow-300 sm:text-sm">
-          Menghubungkan ke Backend
+          Pondok Pesantren Al-Furqon
         </p>
 
         <h1 className="mt-4 text-2xl font-black sm:text-5xl">
@@ -514,93 +669,9 @@ function LoadingPage() {
   );
 }
 
-function MaintenancePage({ onRetry, checking }) {
-  return (
-    <main className="relative min-h-[100dvh] overflow-hidden bg-[#041b15] px-4 text-white">
-      <div className="absolute inset-0">
-        <SafeImage
-          src="/hero-santri.jpg"
-          alt="Maintenance Fasilitas"
-          className="h-full w-full object-cover opacity-30"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#041b15] via-[#062d22]/95 to-[#041b15]" />
-        <div className="absolute inset-0 bg-black/55" />
-      </div>
-
-      <IslamicBackground dark intense />
-
-      <div className="relative z-10 mx-auto flex min-h-[100dvh] w-full max-w-5xl flex-col items-center justify-center py-20 text-center">
-        <div className="relative mx-auto flex h-20 w-20 items-center justify-center rounded-[2rem] border border-yellow-300/30 bg-yellow-300/10 text-3xl text-yellow-300 shadow-[0_0_70px_rgba(250,204,21,0.25)] backdrop-blur-xl sm:h-24 sm:w-24 sm:text-4xl">
-          <motion.div
-            animate={{ rotate: [0, -8, 8, 0] }}
-            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <FaWrench />
-          </motion.div>
-        </div>
-
-        <p className="mt-8 text-base leading-loose text-yellow-300 sm:text-xl lg:text-2xl">
-          إِنَّ مَعَ الْعُسْرِ يُسْرًا
-        </p>
-
-        <div className="mt-3">
-          <Badge light>Facilities Maintenance</Badge>
-        </div>
-
-        <h1 className="mt-5 text-[clamp(2rem,12vw,6.5rem)] font-black leading-[0.95] tracking-[-0.045em] lg:tracking-[-0.065em]">
-          Data fasilitas
-          <span className="block bg-gradient-to-r from-yellow-300 via-yellow-400 to-emerald-200 bg-clip-text text-transparent">
-            sedang tidak tersedia.
-          </span>
-        </h1>
-
-        <p className="mx-auto mt-6 max-w-3xl text-sm leading-relaxed text-emerald-100 sm:text-base lg:text-xl">
-          Backend Express.js belum berjalan atau endpoint{" "}
-          <span className="font-black text-yellow-300">/api/fasilitas</span>{" "}
-          belum dapat dihubungi.
-        </p>
-
-        <div className="mt-8 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
-          <button
-            onClick={onRetry}
-            disabled={checking}
-            className="inline-flex items-center justify-center gap-3 rounded-full bg-yellow-400 px-8 py-4 font-black text-emerald-950 shadow-[0_0_50px_rgba(250,204,21,0.35)] transition hover:-translate-y-1 hover:bg-yellow-300 disabled:cursor-not-allowed disabled:opacity-70"
-          >
-            <motion.span
-              animate={checking ? { rotate: 360 } : { rotate: 0 }}
-              transition={{
-                repeat: checking ? Infinity : 0,
-                duration: 1,
-                ease: "linear",
-              }}
-            >
-              <FaRedo />
-            </motion.span>
-            {checking ? "Mengecek Backend..." : "Coba Lagi"}
-          </button>
-
-          <a
-            href="http://localhost:5000/api/fasilitas"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/10 px-8 py-4 font-black text-white backdrop-blur transition hover:-translate-y-1 hover:bg-white/20"
-          >
-            Cek API Fasilitas
-          </a>
-        </div>
-      </div>
-    </main>
-  );
-}
-
-/* =========================================================
-   MAIN PAGE
-========================================================= */
-
 export default function Fasilitas() {
-  const [pageData, setPageData] = useState(null);
+  const [pageData, setPageData] = useState(DEFAULT_FASILITAS_DATA);
   const [loading, setLoading] = useState(true);
-  const [maintenance, setMaintenance] = useState(false);
   const [checking, setChecking] = useState(false);
 
   const [activeIndex, setActiveIndex] = useState(0);
@@ -629,7 +700,6 @@ export default function Fasilitas() {
   const fetchFasilitasData = async () => {
     try {
       setChecking(true);
-      setMaintenance(false);
 
       if (!API_URL) {
         throw new Error("NEXT_PUBLIC_API_URL belum diatur");
@@ -649,14 +719,18 @@ export default function Fasilitas() {
         throw new Error("Format data fasilitas tidak valid");
       }
 
-      setPageData(result.data);
+      const normalizedData = normalizeFasilitasData(result.data);
+
+      setPageData(normalizedData);
       setActiveIndex(0);
       setSelectedCategory("Semua");
-      setMaintenance(false);
     } catch (error) {
       console.error("FASILITAS BACKEND ERROR:", error.message);
-      setPageData(null);
-      setMaintenance(true);
+
+      // PENTING:
+      // Jangan masuk halaman maintenance.
+      // Kalau backend gagal, tetap tampilkan data default.
+      setPageData(DEFAULT_FASILITAS_DATA);
     } finally {
       setLoading(false);
       setChecking(false);
@@ -667,24 +741,26 @@ export default function Fasilitas() {
     fetchFasilitasData();
   }, []);
 
-  if (loading) return <LoadingPage />;
-
-  if (maintenance || !pageData) {
-    return <MaintenancePage onRetry={fetchFasilitasData} checking={checking} />;
+  if (loading && checking) {
+    return <LoadingPage />;
   }
 
-  const { hero, stats, featuredInfo, featuredCards, qualities, facilities } =
-    pageData;
+  const safePageData = normalizeFasilitasData(pageData);
 
-  const categories = ["Semua", ...new Set(facilities.map((item) => item.category))];
+  const { hero, stats, featuredInfo, featuredCards, qualities, facilities } =
+    safePageData;
+
+  const categories = [
+    "Semua",
+    ...new Set(facilities.map((item) => item.category).filter(Boolean)),
+  ];
 
   const filteredFacilities =
     selectedCategory === "Semua"
       ? facilities
       : facilities.filter((item) => item.category === selectedCategory);
 
-  const featured =
-    facilities.find((item) => item.featured) || facilities[0];
+  const featured = facilities.find((item) => item.featured) || facilities[0];
 
   const activeFacility =
     filteredFacilities[activeIndex] || filteredFacilities[0] || facilities[0];
@@ -722,7 +798,6 @@ export default function Fasilitas() {
       <FloatingNavigator />
       <Navbar />
 
-      {/* HERO */}
       <Section
         id="hero"
         dark
@@ -750,7 +825,10 @@ export default function Fasilitas() {
             <motion.div
               style={
                 isDesktop
-                  ? { y: heroTextY, opacity: heroOpacity }
+                  ? {
+                      y: heroTextY,
+                      opacity: heroOpacity,
+                    }
                   : undefined
               }
               initial={{ opacity: 0, y: 42 }}
@@ -804,6 +882,11 @@ export default function Fasilitas() {
                 <MagneticButton href="#featured" variant="secondary">
                   <FaPlay />
                   Lihat Unggulan
+                </MagneticButton>
+
+                <MagneticButton href={WHATSAPP_ADMIN_URL} variant="secondary">
+                  Hubungi Admin
+                  <FaHandSparkles />
                 </MagneticButton>
               </motion.div>
 
@@ -909,7 +992,6 @@ export default function Fasilitas() {
         </Container>
       </Section>
 
-      {/* FEATURED */}
       <Section
         id="featured"
         dark
@@ -989,7 +1071,6 @@ export default function Fasilitas() {
         </Container>
       </Section>
 
-      {/* EXPLORER */}
       <Section
         id="explorer"
         className="bg-gradient-to-br from-[#f7f1df] via-white to-emerald-50"
@@ -1010,6 +1091,7 @@ export default function Fasilitas() {
             <div className="no-scrollbar mx-auto mt-8 flex max-w-5xl gap-3 overflow-x-auto pb-2 lg:flex-wrap lg:justify-center">
               {categories.map((category) => (
                 <button
+                  type="button"
                   key={category}
                   onClick={() => selectCategory(category)}
                   className={`shrink-0 rounded-full border px-5 py-3 text-sm font-black transition ${
@@ -1027,6 +1109,7 @@ export default function Fasilitas() {
               <div className="no-scrollbar flex gap-3 overflow-x-auto pb-2 lg:grid lg:overflow-visible">
                 {filteredFacilities.map((item, index) => (
                   <button
+                    type="button"
                     key={item.id || item.name}
                     onClick={() => setActiveIndex(index)}
                     className={`group min-w-[260px] rounded-[1.5rem] border p-4 text-left transition lg:min-w-0 lg:rounded-[1.7rem] ${
@@ -1106,16 +1189,21 @@ export default function Fasilitas() {
                     </div>
                   </div>
 
-                  <div className="grid gap-5 p-5 md:grid-cols-[1.1fr_0.9fr] sm:p-6 lg:p-8">
+                  <div className="grid gap-5 p-5 sm:p-6 md:grid-cols-[1.1fr_0.9fr] lg:p-8">
                     <div>
                       <p className="text-sm leading-relaxed text-emerald-100 sm:text-base">
                         {activeFacility?.detail || activeFacility?.desc}
                       </p>
 
-                      <button className="mt-5 inline-flex w-full items-center justify-center gap-3 rounded-full bg-yellow-400 px-6 py-3 font-black text-emerald-950 transition hover:bg-yellow-300 sm:w-auto">
-                        Lihat Detail
+                      <a
+                        href={WHATSAPP_ADMIN_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-5 inline-flex w-full items-center justify-center gap-3 rounded-full bg-yellow-400 px-6 py-3 font-black text-emerald-950 transition hover:bg-yellow-300 sm:w-auto"
+                      >
+                        Tanya Admin
                         <FaArrowRight />
-                      </button>
+                      </a>
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
@@ -1140,7 +1228,6 @@ export default function Fasilitas() {
         </Container>
       </Section>
 
-      {/* CINEMATIC */}
       <Section
         id="cinematic"
         dark
@@ -1201,6 +1288,7 @@ export default function Fasilitas() {
 
             <div className="mt-6 flex items-center justify-between gap-4">
               <button
+                type="button"
                 onClick={prev}
                 className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white backdrop-blur transition hover:bg-white/20 sm:h-14 sm:w-14"
               >
@@ -1210,6 +1298,7 @@ export default function Fasilitas() {
               <div className="no-scrollbar flex max-w-[70vw] justify-center gap-2 overflow-x-auto pb-1">
                 {filteredFacilities.map((item, index) => (
                   <button
+                    type="button"
                     key={item.id || item.name}
                     onClick={() => setActiveIndex(index)}
                     className={`h-3 shrink-0 rounded-full transition ${
@@ -1222,6 +1311,7 @@ export default function Fasilitas() {
               </div>
 
               <button
+                type="button"
                 onClick={next}
                 className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white backdrop-blur transition hover:bg-white/20 sm:h-14 sm:w-14"
               >
@@ -1232,7 +1322,6 @@ export default function Fasilitas() {
         </Container>
       </Section>
 
-      {/* CTA */}
       <Section
         id="cta"
         dark
@@ -1331,10 +1420,10 @@ export default function Fasilitas() {
                     <FaArrowRight />
                   </MagneticButton>
 
-<MagneticButton href={WHATSAPP_ADMIN_URL} variant="secondary">
-  Hubungi Admin
-  <FaHandSparkles />
-</MagneticButton>
+                  <MagneticButton href={WHATSAPP_ADMIN_URL} variant="secondary">
+                    Hubungi Admin
+                    <FaHandSparkles />
+                  </MagneticButton>
                 </div>
               </div>
 
