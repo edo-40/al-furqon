@@ -28,8 +28,6 @@ import {
   FaHeart,
   FaMoon,
   FaQuoteLeft,
-  FaRedo,
-  FaWrench,
   FaPlay,
   FaCompass,
   FaHome,
@@ -42,23 +40,169 @@ import {
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
 const FALLBACK_IMAGE = "/smk.jpg";
 
-/* =========================================================
-   WHATSAPP ADMIN
-   Ganti nomor di bawah dengan nomor admin pesantren.
-   Format wajib: kode negara + nomor, tanpa 0, tanpa +, tanpa spasi.
-   Contoh:
-   0812-3456-7890 menjadi 6281234567890
-========================================================= */
-
 const ADMIN_WHATSAPP_NUMBER = "6283899601027";
 
 const ADMIN_WHATSAPP_MESSAGE =
-  "Assalamu'alaikum Admin Pesantren Al-Furqon, saya ingin bertanya mengenai pesantren.";
+  "Assalamu'alaikum Admin Pesantren Al-Furqon, saya ingin bertanya mengenai pendidikan pesantren.";
 
 const WHATSAPP_ADMIN_URL = `https://wa.me/${ADMIN_WHATSAPP_NUMBER}?text=${encodeURIComponent(
   ADMIN_WHATSAPP_MESSAGE
 )}`;
 
+/* =========================================================
+   DEFAULT DATA
+   Dipakai agar halaman Pendidikan tetap tampil normal
+   walaupun backend /api/pendidikan gagal atau belum siap.
+========================================================= */
+
+const DEFAULT_PENDIDIKAN_DATA = {
+  hero: {
+    arabic: "وَقُلْ رَبِّ زِدْنِي عِلْمًا",
+    badge: "Pendidikan Pesantren",
+    title: "Pendidikan yang membentuk",
+    highlight: "ilmu dan adab.",
+    desc: "Pondok Pesantren Al-Furqon menghadirkan pendidikan yang menyeimbangkan ilmu agama, pengetahuan umum, adab, kedisiplinan, dan kemandirian santri.",
+    image: "/smk.jpg",
+  },
+
+  stats: [
+    {
+      number: "Ilmu",
+      label: "Pembelajaran agama dan umum",
+    },
+    {
+      number: "Adab",
+      label: "Pembentukan karakter santri",
+    },
+    {
+      number: "Mandiri",
+      label: "Kehidupan pesantren terarah",
+    },
+  ],
+
+  values: [
+    {
+      title: "Ilmu",
+      desc: "Santri dibimbing untuk mencintai ilmu agama dan pengetahuan umum sebagai bekal masa depan.",
+      iconKey: "book",
+    },
+    {
+      title: "Adab",
+      desc: "Pendidikan pesantren menanamkan sopan santun, akhlak, tanggung jawab, dan hormat kepada guru serta orang tua.",
+      iconKey: "heart",
+    },
+    {
+      title: "Ibadah",
+      desc: "Kegiatan harian membantu santri membiasakan ibadah, membaca Al-Qur'an, dan menjaga kedekatan kepada Allah.",
+      iconKey: "quran",
+    },
+    {
+      title: "Kemandirian",
+      desc: "Santri belajar disiplin, rapi, bertanggung jawab, peduli lingkungan, dan mampu mengatur diri.",
+      iconKey: "shield",
+    },
+  ],
+
+  education: [
+    {
+      level: "01",
+      title: "Pendidikan Pesantren",
+      shortTitle: "Pesantren",
+      subtitle: "Fondasi ilmu, ibadah, dan adab santri",
+      story:
+        "Pendidikan pesantren menjadi dasar utama dalam membentuk santri yang berilmu, berakhlak, disiplin, dan terbiasa dengan kehidupan islami.",
+      impact:
+        "Santri memiliki fondasi adab, ibadah, kedisiplinan, dan tanggung jawab dalam kehidupan sehari-hari.",
+      quote:
+        "Pendidikan pesantren bukan hanya belajar, tetapi membentuk kebiasaan hidup yang baik.",
+      arabic: "رَبِّ زِدْنِي عِلْمًا",
+      bgImage: "/hero-santri.jpg",
+      fallbackImage: "/smk.jpg",
+      iconKey: "mosque",
+      color: "from-yellow-300 via-emerald-300 to-yellow-300",
+      focus: ["Adab santri", "Ibadah harian", "Kedisiplinan", "Kemandirian"],
+    },
+    {
+      level: "02",
+      title: "Pendidikan Formal",
+      shortTitle: "Formal",
+      subtitle: "Ilmu umum untuk masa depan santri",
+      story:
+        "Pendidikan formal mendukung kemampuan akademik santri agar mampu berkembang, berpikir terarah, dan siap menghadapi jenjang berikutnya.",
+      impact:
+        "Santri memiliki kemampuan akademik, disiplin belajar, dan kesiapan menghadapi masa depan.",
+      quote:
+        "Ilmu umum dan ilmu agama berjalan bersama untuk membentuk generasi yang kuat.",
+      arabic: "طَلَبُ الْعِلْمِ فَرِيضَةٌ",
+      bgImage: "/smk.jpg",
+      fallbackImage: "/hero-santri.jpg",
+      iconKey: "graduate",
+      color: "from-emerald-300 via-yellow-300 to-emerald-300",
+      focus: ["Akademik", "Praktik", "Literasi", "Evaluasi"],
+    },
+    {
+      level: "03",
+      title: "Tahfidz dan Al-Qur'an",
+      shortTitle: "Tahfidz",
+      subtitle: "Membiasakan santri dekat dengan Al-Qur'an",
+      story:
+        "Program Al-Qur'an membimbing santri membaca, memperbaiki bacaan, menghafal, murajaah, dan mencintai Al-Qur'an dalam kehidupan harian.",
+      impact:
+        "Santri terbiasa membaca, menghafal, menjaga bacaan, dan menjadikan Al-Qur'an sebagai pedoman hidup.",
+      quote:
+        "Al-Qur'an menjadi cahaya yang membimbing langkah santri.",
+      arabic: "خَيْرُكُمْ مَنْ تَعَلَّمَ الْقُرْآنَ",
+      bgImage: "/hero-santri.jpg",
+      fallbackImage: "/smk.jpg",
+      iconKey: "quran",
+      color: "from-yellow-300 via-yellow-400 to-emerald-300",
+      focus: ["Tahsin", "Tahfidz", "Murajaah", "Adab Qur'ani"],
+    },
+  ],
+};
+
+/* =========================================================
+   DATA NORMALIZER
+========================================================= */
+
+function normalizePendidikanData(data) {
+  if (!data || typeof data !== "object") {
+    return DEFAULT_PENDIDIKAN_DATA;
+  }
+
+  return {
+    hero: {
+      ...DEFAULT_PENDIDIKAN_DATA.hero,
+      ...(data.hero || {}),
+    },
+
+    stats:
+      Array.isArray(data.stats) && data.stats.length
+        ? data.stats
+        : DEFAULT_PENDIDIKAN_DATA.stats,
+
+    values:
+      Array.isArray(data.values) && data.values.length
+        ? data.values
+        : DEFAULT_PENDIDIKAN_DATA.values,
+
+    education:
+      Array.isArray(data.education) && data.education.length
+        ? data.education.map((item, index) => ({
+            ...DEFAULT_PENDIDIKAN_DATA.education[
+              index % DEFAULT_PENDIDIKAN_DATA.education.length
+            ],
+            ...item,
+            focus:
+              Array.isArray(item.focus) && item.focus.length
+                ? item.focus
+                : DEFAULT_PENDIDIKAN_DATA.education[
+                    index % DEFAULT_PENDIDIKAN_DATA.education.length
+                  ].focus,
+          }))
+        : DEFAULT_PENDIDIKAN_DATA.education,
+  };
+}
 
 /* =========================================================
    RESPONSIVE HELPER
@@ -130,7 +274,9 @@ function SafeImage({ src, alt, className = "", fallback = FALLBACK_IMAGE }) {
       alt={alt || "image"}
       className={className}
       onError={() => {
-        if (currentSrc !== fallback) setCurrentSrc(fallback);
+        if (currentSrc !== fallback) {
+          setCurrentSrc(fallback);
+        }
       }}
     />
   );
@@ -172,6 +318,7 @@ function CursorGlow() {
     };
 
     window.addEventListener("mousemove", handleMove);
+
     return () => window.removeEventListener("mousemove", handleMove);
   }, [isDesktop, mouseX, mouseY, shouldReduceMotion]);
 
@@ -195,8 +342,15 @@ function IslamicBackground({ dark = false, intense = false }) {
       />
 
       <motion.div
-        animate={{ rotate: [0, 16, 0], scale: [1, 1.08, 1] }}
-        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+        animate={{
+          rotate: [0, 16, 0],
+          scale: [1, 1.08, 1],
+        }}
+        transition={{
+          duration: 15,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
         className={`absolute -left-40 top-20 h-72 w-72 rounded-full border sm:h-80 sm:w-80 ${
           dark
             ? "border-yellow-300/20 bg-yellow-300/5"
@@ -205,8 +359,15 @@ function IslamicBackground({ dark = false, intense = false }) {
       />
 
       <motion.div
-        animate={{ rotate: [0, -18, 0], scale: [1, 1.08, 1] }}
-        transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+        animate={{
+          rotate: [0, -18, 0],
+          scale: [1, 1.08, 1],
+        }}
+        transition={{
+          duration: 18,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
         className={`absolute -right-44 bottom-10 h-80 w-80 rounded-full border sm:h-[34rem] sm:w-[34rem] ${
           dark
             ? "border-emerald-300/20 bg-emerald-300/5"
@@ -302,7 +463,11 @@ function Reveal({ children, delay = 0, type = "up", className = "" }) {
       initial="hidden"
       whileInView="show"
       viewport={{ once: true, amount: 0.18 }}
-      transition={{ duration: 0.65, delay, ease: [0.22, 1, 0.36, 1] }}
+      transition={{
+        duration: 0.65,
+        delay,
+        ease: [0.22, 1, 0.36, 1],
+      }}
       className={className}
     >
       {children}
@@ -346,7 +511,11 @@ function SectionHeader({ badge, title, desc, light = false, align = "center" }) 
 
 function TiltCard({ children, className = "" }) {
   const isDesktop = useIsDesktop();
-  const [rotate, setRotate] = useState({ x: 0, y: 0 });
+
+  const [rotate, setRotate] = useState({
+    x: 0,
+    y: 0,
+  });
 
   const handleMove = (e) => {
     if (!isDesktop) return;
@@ -357,8 +526,8 @@ function TiltCard({ children, className = "" }) {
     const y = e.clientY - rect.top;
 
     setRotate({
-      x: ((y / rect.height) - 0.5) * -8,
-      y: ((x / rect.width) - 0.5) * 8,
+      x: (y / rect.height - 0.5) * -8,
+      y: (x / rect.width - 0.5) * 8,
     });
   };
 
@@ -368,7 +537,11 @@ function TiltCard({ children, className = "" }) {
       onMouseLeave={() => setRotate({ x: 0, y: 0 })}
       animate={isDesktop ? { rotateX: rotate.x, rotateY: rotate.y } : {}}
       whileHover={isDesktop ? { y: -8, scale: 1.015 } : {}}
-      transition={{ type: "spring", stiffness: 240, damping: 23 }}
+      transition={{
+        type: "spring",
+        stiffness: 240,
+        damping: 23,
+      }}
       style={isDesktop ? { transformStyle: "preserve-3d" } : undefined}
       className={`group ${className}`}
     >
@@ -405,6 +578,7 @@ function MagneticButton({ children, onClick, variant = "primary" }) {
 
   return (
     <motion.button
+      type="button"
       onClick={onClick}
       onMouseMove={handleMove}
       onMouseLeave={() => {
@@ -477,7 +651,7 @@ function OrbitRings() {
 }
 
 /* =========================================================
-   LOADING & MAINTENANCE
+   LOADING
 ========================================================= */
 
 function LoadingPage() {
@@ -492,12 +666,16 @@ function LoadingPage() {
       >
         <motion.div
           animate={{ rotate: 360 }}
-          transition={{ duration: 2.2, repeat: Infinity, ease: "linear" }}
+          transition={{
+            duration: 2.2,
+            repeat: Infinity,
+            ease: "linear",
+          }}
           className="mx-auto mb-6 h-16 w-16 rounded-full border-4 border-yellow-300/20 border-t-yellow-300 sm:h-20 sm:w-20"
         />
 
         <p className="text-xs font-black uppercase tracking-[0.28em] text-yellow-300 sm:text-sm">
-          Menghubungkan ke Backend
+          Pondok Pesantren Al-Furqon
         </p>
 
         <h1 className="mt-4 text-2xl font-black sm:text-5xl">
@@ -508,94 +686,13 @@ function LoadingPage() {
   );
 }
 
-function MaintenancePage({ onRetry, checking }) {
-  return (
-    <main className="relative min-h-[100dvh] overflow-hidden bg-[#041b15] px-4 text-white">
-      <div className="absolute inset-0">
-        <SafeImage
-          src="/smk.jpg"
-          alt="Maintenance Pendidikan"
-          className="h-full w-full object-cover opacity-30"
-        />
-
-        <div className="absolute inset-0 bg-gradient-to-r from-[#041b15] via-[#062d22]/95 to-[#041b15]" />
-        <div className="absolute inset-0 bg-black/55" />
-      </div>
-
-      <IslamicBackground dark intense />
-
-      <div className="relative z-10 mx-auto flex min-h-[100dvh] w-full max-w-5xl flex-col items-center justify-center py-20 text-center">
-        <div className="relative mx-auto flex h-20 w-20 items-center justify-center rounded-[2rem] border border-yellow-300/30 bg-yellow-300/10 text-3xl text-yellow-300 shadow-[0_0_70px_rgba(250,204,21,0.25)] backdrop-blur-xl sm:h-24 sm:w-24 sm:text-4xl">
-          <motion.div
-            animate={{ rotate: [0, -8, 8, 0] }}
-            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <FaWrench />
-          </motion.div>
-        </div>
-
-        <p className="mt-8 text-base leading-loose text-yellow-300 sm:text-xl lg:text-2xl">
-          إِنَّ مَعَ الْعُسْرِ يُسْرًا
-        </p>
-
-        <div className="mt-3">
-          <Badge light>Education Maintenance</Badge>
-        </div>
-
-        <h1 className="mt-5 text-[clamp(2rem,12vw,6.5rem)] font-black leading-[0.95] tracking-[-0.045em] lg:tracking-[-0.065em]">
-          Data pendidikan
-          <span className="block bg-gradient-to-r from-yellow-300 via-yellow-400 to-emerald-200 bg-clip-text text-transparent">
-            sedang tidak tersedia.
-          </span>
-        </h1>
-
-        <p className="mx-auto mt-6 max-w-3xl text-sm leading-relaxed text-emerald-100 sm:text-base lg:text-xl">
-          Backend Express.js belum berjalan atau endpoint{" "}
-          <span className="font-black text-yellow-300">/api/pendidikan</span>{" "}
-          belum dapat dihubungi.
-        </p>
-
-        <div className="mt-8 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
-          <button
-            onClick={onRetry}
-            disabled={checking}
-            className="inline-flex items-center justify-center gap-3 rounded-full bg-yellow-400 px-8 py-4 font-black text-emerald-950 shadow-[0_0_50px_rgba(250,204,21,0.35)] transition hover:-translate-y-1 hover:bg-yellow-300 disabled:cursor-not-allowed disabled:opacity-70"
-          >
-            <motion.span
-              animate={checking ? { rotate: 360 } : { rotate: 0 }}
-              transition={{
-                repeat: checking ? Infinity : 0,
-                duration: 1,
-                ease: "linear",
-              }}
-            >
-              <FaRedo />
-            </motion.span>
-            {checking ? "Mengecek Backend..." : "Coba Lagi"}
-          </button>
-
-          <a
-            href="http://localhost:5000/api/pendidikan"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/10 px-8 py-4 font-black text-white backdrop-blur transition hover:-translate-y-1 hover:bg-white/20"
-          >
-            Cek API Pendidikan
-          </a>
-        </div>
-      </div>
-    </main>
-  );
-}
-
 /* =========================================================
    MAIN PAGE
 ========================================================= */
 
 export default function Pendidikan() {
-  const [pageData, setPageData] = useState(null);
+  const [pageData, setPageData] = useState(DEFAULT_PENDIDIKAN_DATA);
   const [loading, setLoading] = useState(true);
-  const [maintenance, setMaintenance] = useState(false);
   const [checking, setChecking] = useState(false);
 
   const [active, setActive] = useState(0);
@@ -624,7 +721,6 @@ export default function Pendidikan() {
   const fetchPendidikanData = async () => {
     try {
       setChecking(true);
-      setMaintenance(false);
 
       if (!API_URL) {
         throw new Error("NEXT_PUBLIC_API_URL belum diatur");
@@ -644,14 +740,18 @@ export default function Pendidikan() {
         throw new Error("Format data pendidikan tidak valid");
       }
 
-      setPageData(result.data);
+      const normalizedData = normalizePendidikanData(result.data);
+
+      setPageData(normalizedData);
       setActive(0);
       setCurrentQuote(0);
-      setMaintenance(false);
     } catch (error) {
       console.error("PENDIDIKAN BACKEND ERROR:", error.message);
-      setPageData(null);
-      setMaintenance(true);
+
+      // PENTING:
+      // Jangan masuk halaman maintenance.
+      // Kalau backend gagal, tetap tampilkan data default.
+      setPageData(DEFAULT_PENDIDIKAN_DATA);
     } finally {
       setLoading(false);
       setChecking(false);
@@ -662,15 +762,17 @@ export default function Pendidikan() {
     fetchPendidikanData();
   }, []);
 
+  const safePageData = normalizePendidikanData(pageData);
+
   useEffect(() => {
-    if (!pageData?.education?.length) return;
+    if (!safePageData?.education?.length) return;
 
     const interval = setInterval(() => {
-      setCurrentQuote((prev) => (prev + 1) % pageData.education.length);
+      setCurrentQuote((prev) => (prev + 1) % safePageData.education.length);
     }, 3800);
 
     return () => clearInterval(interval);
-  }, [pageData]);
+  }, [safePageData.education.length]);
 
   const scrollToJourney = () => {
     journeyRef.current?.scrollIntoView({
@@ -679,13 +781,11 @@ export default function Pendidikan() {
     });
   };
 
-  if (loading) return <LoadingPage />;
-
-  if (maintenance || !pageData) {
-    return <MaintenancePage onRetry={fetchPendidikanData} checking={checking} />;
+  if (loading && checking) {
+    return <LoadingPage />;
   }
 
-  const { hero, stats, values, education } = pageData;
+  const { hero, stats, values, education } = safePageData;
 
   const activeData = education[active] || education[0];
   const quoteData = education[currentQuote] || education[0];
@@ -723,7 +823,9 @@ export default function Pendidikan() {
         <Container className="flex min-h-[100dvh] items-center pt-24 sm:pt-28 lg:pt-28">
           <div className="grid w-full max-w-full items-center gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
             <motion.div
-              style={isDesktop ? { y: heroTextY, opacity: heroOpacity } : undefined}
+              style={
+                isDesktop ? { y: heroTextY, opacity: heroOpacity } : undefined
+              }
               initial={{ opacity: 0, y: 42 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
@@ -775,13 +877,21 @@ export default function Pendidikan() {
                 <MagneticButton
                   variant="secondary"
                   onClick={() =>
-                    document
-                      .getElementById("values")
-                      ?.scrollIntoView({ behavior: isDesktop ? "smooth" : "auto" })
+                    document.getElementById("values")?.scrollIntoView({
+                      behavior: isDesktop ? "smooth" : "auto",
+                    })
                   }
                 >
                   <FaPlay />
                   Lihat Nilai
+                </MagneticButton>
+
+                <MagneticButton
+                  variant="secondary"
+                  onClick={() => window.open(WHATSAPP_ADMIN_URL, "_blank")}
+                >
+                  Hubungi Admin
+                  <FaHandSparkles />
                 </MagneticButton>
               </motion.div>
 
@@ -909,10 +1019,11 @@ export default function Pendidikan() {
                 <TiltCard>
                   <div className="relative h-full overflow-hidden rounded-[1.7rem] border border-emerald-100 bg-white/90 p-5 shadow-xl backdrop-blur transition group-hover:bg-white sm:rounded-[2rem] sm:p-6">
                     <div className="absolute -right-14 -top-14 h-36 w-36 rounded-full bg-yellow-300/25 blur-3xl transition group-hover:scale-125" />
+
                     <div className="absolute -bottom-16 -left-16 h-36 w-36 rounded-full bg-emerald-300/20 blur-3xl" />
 
                     <div className="relative z-10">
-                      <div className="flex h-13 w-13 h-14 w-14 items-center justify-center rounded-2xl bg-emerald-950 text-2xl text-yellow-300 shadow-lg transition group-hover:scale-110">
+                      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-950 text-2xl text-yellow-300 shadow-lg transition group-hover:scale-110">
                         {getIcon(item.iconKey)}
                       </div>
 
@@ -965,6 +1076,7 @@ export default function Pendidikan() {
               <div className="no-scrollbar mt-6 flex gap-3 overflow-x-auto pb-2 lg:hidden">
                 {education.map((item, index) => (
                   <button
+                    type="button"
                     key={item.level}
                     onClick={() => setActive(index)}
                     className={`min-w-[124px] rounded-2xl border p-3 text-center transition ${
@@ -991,6 +1103,7 @@ export default function Pendidikan() {
               <div className="mt-7 hidden gap-3 lg:grid">
                 {education.map((item, index) => (
                   <button
+                    type="button"
                     key={item.level}
                     onClick={() => setActive(index)}
                     className={`group relative overflow-hidden rounded-[1.7rem] border p-5 text-left transition ${
@@ -1083,6 +1196,7 @@ export default function Pendidikan() {
 
                   <div className="relative overflow-hidden bg-emerald-950/90 p-5 sm:p-8 lg:p-10">
                     <div className="absolute -right-20 -top-20 h-56 w-56 rounded-full bg-yellow-300/10 blur-3xl" />
+
                     <div className="absolute -bottom-20 -left-20 h-56 w-56 rounded-full bg-emerald-300/10 blur-3xl" />
 
                     <div className="relative z-10">
@@ -1109,6 +1223,7 @@ export default function Pendidikan() {
                             className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/10 p-3"
                           >
                             <FaCheckCircle className="shrink-0 text-yellow-300" />
+
                             <span className="text-sm font-semibold text-white">
                               {focus}
                             </span>
@@ -1145,7 +1260,7 @@ export default function Pendidikan() {
           <SectionHeader
             badge="Alur Perjalanan"
             title="Pendidikan santri berjalan bertahap dan terarah"
-            desc="Setiap jenjang dirancang seperti perjalanan: dimulai dari fondasi, dilanjutkan keterampilan, dan diperdalam dengan nilai Al-Qur’an."
+            desc="Setiap jenjang dirancang seperti perjalanan: dimulai dari fondasi, dilanjutkan keterampilan, dan diperdalam dengan nilai Al-Qur'an."
           />
 
           <div className="relative mt-8 grid gap-5 sm:mt-10 lg:mt-12 lg:grid-cols-3 lg:gap-6">
@@ -1218,8 +1333,11 @@ export default function Pendidikan() {
           <Reveal type="zoom">
             <div className="relative mx-auto w-full max-w-6xl overflow-hidden rounded-[1.8rem] border border-white/10 bg-[#041b15] text-white shadow-[0_35px_110px_rgba(0,0,0,0.45)] sm:rounded-[2.6rem]">
               <div className="absolute inset-0 bg-[url('/pattern.png')] opacity-[0.07]" />
+
               <div className="absolute inset-0 bg-gradient-to-br from-yellow-300/10 via-transparent to-emerald-300/10" />
+
               <div className="absolute -right-24 -top-24 h-80 w-80 rounded-full bg-yellow-300/20 blur-3xl" />
+
               <div className="absolute -bottom-24 -left-24 h-80 w-80 rounded-full bg-emerald-300/20 blur-3xl" />
 
               <div className="relative z-10 border-b border-white/10 bg-white/[0.04] px-4 py-4 text-[10px] font-black uppercase tracking-[0.18em] text-yellow-300 sm:px-7 sm:text-[11px] sm:tracking-[0.25em]">
@@ -1255,7 +1373,7 @@ export default function Pendidikan() {
 
                 <p className="mx-auto mt-6 max-w-4xl text-sm leading-relaxed text-emerald-100 sm:text-base lg:text-xl">
                   Dari fondasi adab, keterampilan modern, hingga pendalaman
-                  Al-Qur’an. Setiap langkah diarahkan untuk membentuk pribadi
+                  Al-Qur'an. Setiap langkah diarahkan untuk membentuk pribadi
                   yang berilmu, berakhlak, dan siap menghadapi masa depan.
                 </p>
 
@@ -1302,7 +1420,10 @@ export default function Pendidikan() {
                     <FaArrowRight />
                   </MagneticButton>
 
-                  <MagneticButton variant="secondary">
+                  <MagneticButton
+                    variant="secondary"
+                    onClick={() => window.open(WHATSAPP_ADMIN_URL, "_blank")}
+                  >
                     Hubungi Admin
                     <FaHandSparkles />
                   </MagneticButton>
