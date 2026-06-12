@@ -759,16 +759,16 @@ function MaintenancePage({ onRetry, checking }) {
         >
           {[
   {
-    title: "Website Sedang Diperbarui",
-    code: "Kami sedang meningkatkan layanan website agar lebih nyaman digunakan.",
+    title: "Informasi Pesantren",
+    code: "Lihat informasi resmi seputar Pondok Pesantren Al-Furqon, mulai dari profil, pendidikan, fasilitas, hingga kegiatan santri.",
   },
   {
-    title: "Akses Akan Segera Dibuka",
-    code: "Silakan coba kembali beberapa saat lagi.",
+    title: "Pendaftaran Santri",
+    code: "Calon santri dan wali santri dapat melihat alur pendaftaran, persyaratan berkas, dan informasi administrasi pesantren.",
   },
   {
-    title: "Butuh Bantuan?",
-    code: "Hubungi admin pesantren melalui WhatsApp jika ada keperluan penting.",
+    title: "Layanan Wali Santri",
+    code: "Akses layanan digital untuk melihat pemberitahuan, pembayaran, dokumen, dan informasi penting dari pihak pesantren.",
   },
 ].map((item) => (
             <div
