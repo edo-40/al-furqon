@@ -18,7 +18,6 @@ import { useEffect, useState } from "react";
 
 import {
   FaArrowRight,
-  FaRedo,
   FaMosque,
   FaQuran,
   FaCampground,
@@ -31,23 +30,137 @@ import {
   FaMoon,
   FaStar,
   FaCheckCircle,
-  FaWrench,
-  FaKaaba,
   FaPlay,
   FaChevronDown,
-  FaCompass,
   FaQuoteLeft,
-  FaSparkles,
 } from "react-icons/fa";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
-/* =========================================================
-   WHATSAPP ADMIN
-   Ganti nomor di bawah dengan nomor admin pesantren.
-   Format wajib: kode negara + nomor, tanpa 0, tanpa +, tanpa spasi.
-   Contoh:
-   0812-3456-7890 menjadi 6281234567890
-========================================================= */
+
+const DEFAULT_HOME_DATA = {
+  hero: {
+    arabic: "وَقُلْ رَبِّ زِدْنِي عِلْمًا",
+    badge: "Website Resmi Pesantren",
+    title: "Mondok bukan",
+    highlight: "sekadar sekolah.",
+    desc: "Ini perjalanan hidup untuk membentuk ilmu, adab, ibadah, disiplin, dan kemandirian santri bersama Pondok Pesantren Al-Furqon.",
+    image: "/hero-santri.jpg",
+  },
+
+  heroStats: [
+    {
+      value: "24 Jam",
+      label: "Lingkungan pembinaan santri",
+    },
+    {
+      value: "Adab",
+      label: "Fokus pendidikan karakter",
+    },
+    {
+      value: "Digital",
+      label: "Layanan informasi pesantren",
+    },
+  ],
+
+  values: [
+    {
+      title: "Ilmu",
+      desc: "Santri dibimbing untuk mencintai ilmu agama dan pengetahuan umum sebagai bekal masa depan.",
+      iconKey: "book",
+    },
+    {
+      title: "Adab",
+      desc: "Pembinaan akhlak, sopan santun, dan tanggung jawab menjadi bagian penting kehidupan santri.",
+      iconKey: "heart",
+    },
+    {
+      title: "Ibadah",
+      desc: "Kegiatan harian diarahkan untuk membiasakan santri dekat dengan Al-Qur’an dan ibadah.",
+      iconKey: "quran",
+    },
+    {
+      title: "Mandiri",
+      desc: "Lingkungan pesantren membantu santri belajar disiplin, rapi, kuat, dan mandiri.",
+      iconKey: "shield",
+    },
+  ],
+
+  storyChapters: [
+    {
+      number: "01",
+      label: "Niat",
+      title: "Perjalanan santri dimulai dari niat yang baik.",
+      desc: "Mondok bukan hanya berpindah tempat belajar, tetapi memulai perjalanan baru untuk memperbaiki diri.",
+      image: "/hero-santri.jpg",
+    },
+    {
+      number: "02",
+      label: "Ilmu",
+      title: "Santri tumbuh dengan ilmu dan bimbingan.",
+      desc: "Setiap kegiatan menjadi bagian dari pembelajaran, mulai dari kelas, ibadah, hingga kehidupan sehari-hari.",
+      image: "/hero-santri.jpg",
+    },
+    {
+      number: "03",
+      label: "Adab",
+      title: "Adab menjadi dasar sebelum ilmu.",
+      desc: "Santri dibiasakan menghormati guru, orang tua, teman, dan menjaga akhlak dalam kehidupan pesantren.",
+      image: "/hero-santri.jpg",
+    },
+    {
+      number: "04",
+      label: "Masa Depan",
+      title: "Bekal hari ini menjadi arah masa depan.",
+      desc: "Al-Furqon berusaha menjadi tempat tumbuhnya generasi berilmu, beradab, dan bermanfaat.",
+      image: "/hero-santri.jpg",
+    },
+  ],
+
+  programs: [
+    {
+      title: "Tahfidz & Al-Qur’an",
+      tag: "Keislaman",
+      desc: "Pembinaan membaca, menghafal, dan mencintai Al-Qur’an dalam kehidupan santri.",
+      image: "/hero-santri.jpg",
+      iconKey: "quran",
+    },
+    {
+      title: "Pendidikan Formal",
+      tag: "Akademik",
+      desc: "Kegiatan belajar terarah untuk mendukung kemampuan akademik dan masa depan santri.",
+      image: "/hero-santri.jpg",
+      iconKey: "teacher",
+    },
+    {
+      title: "Kemandirian Santri",
+      tag: "Karakter",
+      desc: "Pembiasaan disiplin, tanggung jawab, kebersihan, dan kepedulian dalam lingkungan pesantren.",
+      image: "/hero-santri.jpg",
+      iconKey: "users",
+    },
+  ],
+
+  pembina: [
+    {
+      name: "Pembina Al-Furqon",
+      role: "Pembina Santri",
+      badge: "Pendamping",
+      focus:
+        "Mendampingi santri dalam ibadah, adab, kedisiplinan, kebersihan, dan kehidupan sehari-hari.",
+      image: "/hero-santri.jpg",
+      iconKey: "teacher",
+    },
+    {
+      name: "Guru Pesantren",
+      role: "Pengajar",
+      badge: "Pendidikan",
+      focus:
+        "Membimbing santri dalam pembelajaran, pemahaman ilmu, dan pembentukan karakter.",
+      image: "/hero-santri.jpg",
+      iconKey: "book",
+    },
+  ],
+};
 
 const ADMIN_WHATSAPP_NUMBER = "6283899601027";
 
@@ -58,6 +171,38 @@ const WHATSAPP_ADMIN_URL = `https://wa.me/${ADMIN_WHATSAPP_NUMBER}?text=${encode
   ADMIN_WHATSAPP_MESSAGE
 )}`;
 
+function normalizeHomeData(data) {
+  if (!data || typeof data !== "object") {
+    return DEFAULT_HOME_DATA;
+  }
+
+  return {
+    hero: {
+      ...DEFAULT_HOME_DATA.hero,
+      ...(data.hero || {}),
+    },
+    heroStats:
+      Array.isArray(data.heroStats) && data.heroStats.length
+        ? data.heroStats
+        : DEFAULT_HOME_DATA.heroStats,
+    values:
+      Array.isArray(data.values) && data.values.length
+        ? data.values
+        : DEFAULT_HOME_DATA.values,
+    storyChapters:
+      Array.isArray(data.storyChapters) && data.storyChapters.length
+        ? data.storyChapters
+        : DEFAULT_HOME_DATA.storyChapters,
+    programs:
+      Array.isArray(data.programs) && data.programs.length
+        ? data.programs
+        : DEFAULT_HOME_DATA.programs,
+    pembina:
+      Array.isArray(data.pembina) && data.pembina.length
+        ? data.pembina
+        : DEFAULT_HOME_DATA.pembina,
+  };
+}
 
 function getIcon(key) {
   const icons = {
@@ -266,7 +411,6 @@ function Section({
   const { scrollY } = useScroll();
 
   const start = scene * 900;
-
   const bgY = useTransform(scrollY, [start - 700, start + 900], [-120, 120]);
   const orbY = useTransform(scrollY, [start - 700, start + 900], [120, -120]);
   const lineScale = useTransform(scrollY, [start - 500, start + 500], [0, 1]);
@@ -278,7 +422,6 @@ function Section({
         dark ? "bg-[#041b15] text-white" : "bg-[#f7f1df] text-slate-900"
       } ${className}`}
     >
-      {/* Scroll parallax glow */}
       <motion.div
         style={{ y: bgY }}
         className={`pointer-events-none absolute -left-32 top-20 h-[30rem] w-[30rem] rounded-full blur-3xl ${
@@ -293,7 +436,6 @@ function Section({
         }`}
       />
 
-      {/* Scene indicator kiri */}
       {label && (
         <div className="pointer-events-none absolute left-4 top-1/2 z-20 hidden -translate-y-1/2 xl:block">
           <div className="flex items-center gap-4">
@@ -336,14 +478,12 @@ function Container({ children, className = "", style }) {
 function ResponsiveMotionContainer({ children, className = "", desktopStyle }) {
   return (
     <>
-      {/* MOBILE / TABLET: tanpa parallax agar tidak melebar */}
       <div
         className={`relative z-10 mx-auto w-[92vw] max-w-[1500px] py-20 sm:py-24 lg:hidden ${className}`}
       >
         {children}
       </div>
 
-      {/* DESKTOP: pakai parallax */}
       <motion.div
         style={desktopStyle}
         className={`relative z-10 mx-auto hidden w-[92vw] max-w-[1500px] py-28 will-change-transform lg:block ${className}`}
@@ -472,8 +612,8 @@ function TiltCard({ children, className = "" }) {
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    const rotateX = ((y / rect.height) - 0.5) * -8;
-    const rotateY = ((x / rect.width) - 0.5) * 8;
+    const rotateX = (y / rect.height - 0.5) * -8;
+    const rotateY = (x / rect.width - 0.5) * 8;
 
     setRotate({
       x: rotateX,
@@ -545,6 +685,7 @@ function MagneticButton({ children, href, variant = "primary" }) {
   return (
     <Link href={href}>
       <motion.button
+        type="button"
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         style={{
@@ -613,187 +754,6 @@ function FloatingVerse() {
   );
 }
 
-/* =========================================================
-   MAINTENANCE PAGE
-========================================================= */
-
-function MaintenancePage({ onRetry, checking }) {
-  return (
-    <main className="relative min-h-[100svh] overflow-hidden bg-[#041b15] text-white">
-<div className="absolute inset-0">
-  <ParallaxBlock
-    range={[0, 1000]}
-    y={[-30, 30]}
-    scale={[1.08, 1.02]}
-    className="h-full w-full"
-  >
-    <SafeImage
-      src="/hero-santri.jpg"
-      alt="Maintenance Al-Furqon"
-      className="h-full w-full object-cover"
-    />
-  </ParallaxBlock>
-
-  <div className="absolute inset-0 bg-gradient-to-r from-[#041b15] via-[#062d22]/95 to-[#041b15]" />
-  <div className="absolute inset-0 bg-black/65" />
-</div>
-      <IslamicBackground dark intense />
-
-      <motion.div
-        animate={{ rotate: [0, 360] }}
-        transition={{
-          duration: 38,
-          repeat: Infinity,
-          ease: "linear",
-        }}
-        className="absolute left-1/2 top-1/2 h-[560px] w-[560px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-yellow-300/10"
-      />
-
-      <motion.div
-        animate={{ rotate: [360, 0] }}
-        transition={{
-          duration: 48,
-          repeat: Infinity,
-          ease: "linear",
-        }}
-        className="absolute left-1/2 top-1/2 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-emerald-300/10"
-      />
-
-      <div className="relative z-10 mx-auto flex min-h-[100svh] w-[92vw] max-w-5xl flex-col items-center justify-center py-20 text-center">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.85, y: 30 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="relative"
-        >
-          <div className="absolute inset-0 rounded-full bg-yellow-400/20 blur-3xl" />
-
-          <div className="relative mx-auto flex h-24 w-24 items-center justify-center rounded-[2rem] border border-yellow-300/30 bg-yellow-300/10 text-4xl text-yellow-300 shadow-[0_0_70px_rgba(250,204,21,0.25)] backdrop-blur-xl">
-            <motion.div
-              animate={{ rotate: [0, -8, 8, 0] }}
-              transition={{
-                duration: 2.5,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            >
-              <FaWrench />
-            </motion.div>
-          </div>
-        </motion.div>
-
-        <motion.p
-          initial={{ opacity: 0, y: 25 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.25, duration: 0.7 }}
-          className="mt-8 text-lg leading-loose text-yellow-300 sm:text-xl lg:text-2xl"
-        >
-          إِنَّ مَعَ الْعُسْرِ يُسْرًا
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, y: 35, filter: "blur(10px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{ delay: 0.35, duration: 0.8 }}
-        >
-          <Badge light>Website Resmi Pesantren</Badge>
-
-<h1 className="mt-5 text-[clamp(2.4rem,8vw,6.5rem)] font-black leading-[0.92] tracking-[-0.065em]">
-  Selamat Datang di
-  <span className="block bg-gradient-to-r from-yellow-300 via-yellow-400 to-emerald-200 bg-clip-text text-transparent">
-    Al-Furqon.
-  </span>
-</h1>
-
-<p className="mt-6 max-w-2xl text-base leading-relaxed text-emerald-50/80 sm:text-lg lg:text-xl">
-  Website resmi Pondok Pesantren Al-Furqon sebagai pusat informasi
-  pendidikan, pendaftaran santri, kegiatan pesantren, dan layanan digital
-  untuk santri serta wali santri.
-</p>
-
-          <p className="mx-auto mt-6 max-w-3xl text-sm leading-relaxed text-emerald-100 sm:text-base lg:text-xl">
-  Assalamu’alaikum, Santri Al-Furqon. Informasi pondok sedang dipersiapkan
-  oleh sistem. Silakan tunggu sebentar atau coba kembali beberapa saat lagi.
-</p>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 25 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.55, duration: 0.7 }}
-          className="mt-8 flex flex-col gap-3 sm:flex-row"
-        >
-          <button
-            onClick={onRetry}
-            disabled={checking}
-            className="group inline-flex items-center justify-center gap-3 rounded-full bg-yellow-400 px-8 py-4 font-black text-emerald-950 shadow-[0_0_50px_rgba(250,204,21,0.35)] transition hover:-translate-y-1 hover:bg-yellow-300 disabled:cursor-not-allowed disabled:opacity-70"
-          >
-            <motion.span
-              animate={checking ? { rotate: 360 } : { rotate: 0 }}
-              transition={{
-                repeat: checking ? Infinity : 0,
-                duration: 1,
-                ease: "linear",
-              }}
-            >
-              <FaRedo />
-            </motion.span>
-            {checking ? "Sedang Memuat Informasi..." : "Coba Lagi"}
-          </button>
-
-          <a
-  href="https://wa.me/628999155698?text=Assalamu%27alaikum%20Admin%20Al-Furqon%2C%20saya%20ingin%20bertanya%20mengenai%20informasi%20Pondok%20Pesantren%20Al-Furqon."
-  target="_blank"
-  rel="noopener noreferrer"
-  className="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/10 px-8 py-4 font-black text-white backdrop-blur transition hover:-translate-y-1 hover:bg-white/20"
->
-  Hubungi Admin
-</a>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.85 }}
-          className="mt-10 grid w-full max-w-3xl gap-3 text-left sm:grid-cols-3"
-        >
-          {[
-  {
-    title: "Informasi Pesantren",
-    code: "Lihat informasi resmi seputar Pondok Pesantren Al-Furqon, mulai dari profil, pendidikan, fasilitas, hingga kegiatan santri.",
-  },
-  {
-    title: "Pendaftaran Santri",
-    code: "Calon santri dan wali santri dapat melihat alur pendaftaran, persyaratan berkas, dan informasi administrasi pesantren.",
-  },
-  {
-    title: "Layanan Wali Santri",
-    code: "Akses layanan digital untuk melihat pemberitahuan, pembayaran, dokumen, dan informasi penting dari pihak pesantren.",
-  },
-].map((item) => (
-            <div
-              key={item.title}
-              className="rounded-3xl border border-white/10 bg-white/10 p-4 backdrop-blur-xl"
-            >
-              <p className="text-xs font-black uppercase tracking-[0.2em] text-yellow-300">
-                {item.title}
-              </p>
-
-              <code className="mt-3 block rounded-2xl bg-black/30 px-4 py-3 text-sm text-emerald-100">
-                {item.code}
-              </code>
-            </div>
-          ))}
-        </motion.div>
-      </div>
-    </main>
-  );
-}
-
-/* =========================================================
-   LOADING PAGE
-========================================================= */
-
 function LoadingPage() {
   return (
     <main className="relative flex min-h-[100svh] items-center justify-center overflow-hidden bg-[#041b15] text-white">
@@ -815,66 +775,55 @@ function LoadingPage() {
         />
 
         <p className="text-sm font-black uppercase tracking-[0.35em] text-yellow-300">
-          Menghubungkan ke Backend
+          Pondok Pesantren Al-Furqon
         </p>
 
         <h1 className="mt-4 text-3xl font-black sm:text-5xl">
-          Mohon tunggu...
+          Memuat halaman...
         </h1>
       </motion.div>
     </main>
   );
 }
 
-/* =========================================================
-   MAIN HOME
-========================================================= */
-
 export default function Home() {
-  const [homeData, setHomeData] = useState(null);
+  const [homeData, setHomeData] = useState(DEFAULT_HOME_DATA);
   const [loading, setLoading] = useState(true);
-  const [maintenance, setMaintenance] = useState(false);
   const [checking, setChecking] = useState(false);
 
   const [activeStory, setActiveStory] = useState(0);
   const [activePembina, setActivePembina] = useState(0);
 
-const { scrollY } = useScroll();
+  const { scrollY } = useScroll();
 
-const heroImageScale = useTransform(scrollY, [0, 900], [1, 1.28]);
-const heroTextY = useTransform(scrollY, [0, 900], [0, 180]);
-const heroOverlayOpacity = useTransform(scrollY, [0, 900], [0.38, 0.9]);
+  const heroImageScale = useTransform(scrollY, [0, 900], [1, 1.28]);
+  const heroTextY = useTransform(scrollY, [0, 900], [0, 180]);
+  const heroOverlayOpacity = useTransform(scrollY, [0, 900], [0.38, 0.9]);
 
-const valuesScene = {
-  y: useTransform(scrollY, [500, 1200, 1900], [160, 0, -120]),
-  scale: useTransform(scrollY, [500, 1200, 1900], [0.94, 1, 1.04]),
-  opacity: useTransform(scrollY, [500, 850, 1850], [0.35, 1, 0.8]),
-};
+  const valuesScene = {
+    y: useTransform(scrollY, [500, 1200, 1900], [160, 0, -120]),
+    scale: useTransform(scrollY, [500, 1200, 1900], [0.94, 1, 1.04]),
+    opacity: useTransform(scrollY, [500, 850, 1850], [0.35, 1, 0.8]),
+  };
 
-const storyScene = {
-  y: useTransform(scrollY, [1400, 2300, 3200], [180, 0, -160]),
-  scale: useTransform(scrollY, [1400, 2300, 3200], [0.92, 1, 1.04]),
-};
+  const programScene = {
+    y: useTransform(scrollY, [2500, 3500, 4500], [160, 0, -130]),
+    scale: useTransform(scrollY, [2500, 3500, 4500], [0.94, 1, 1.03]),
+  };
 
-const programScene = {
-  y: useTransform(scrollY, [2500, 3500, 4500], [160, 0, -130]),
-  scale: useTransform(scrollY, [2500, 3500, 4500], [0.94, 1, 1.03]),
-};
+  const pembinaScene = {
+    y: useTransform(scrollY, [3600, 4700, 5700], [180, 0, -150]),
+    scale: useTransform(scrollY, [3600, 4700, 5700], [0.93, 1, 1.04]),
+  };
 
-const pembinaScene = {
-  y: useTransform(scrollY, [3600, 4700, 5700], [180, 0, -150]),
-  scale: useTransform(scrollY, [3600, 4700, 5700], [0.93, 1, 1.04]),
-};
-
-const ctaScene = {
-  y: useTransform(scrollY, [5000, 6100], [160, 0]),
-  scale: useTransform(scrollY, [5000, 6100], [0.92, 1]),
-};
+  const ctaScene = {
+    y: useTransform(scrollY, [5000, 6100], [160, 0]),
+    scale: useTransform(scrollY, [5000, 6100], [0.92, 1]),
+  };
 
   const fetchHomeData = async () => {
     try {
       setChecking(true);
-      setMaintenance(false);
 
       if (!API_URL) {
         throw new Error("NEXT_PUBLIC_API_URL belum diatur");
@@ -902,12 +851,10 @@ const ctaScene = {
         throw new Error("Format data backend salah");
       }
 
-      setHomeData(result.data);
-      setMaintenance(false);
+      setHomeData(normalizeHomeData(result.data));
     } catch (error) {
       console.error("BACKEND ERROR:", error.message);
-      setHomeData(null);
-      setMaintenance(true);
+      setHomeData(DEFAULT_HOME_DATA);
     } finally {
       setLoading(false);
       setChecking(false);
@@ -938,18 +885,15 @@ const ctaScene = {
     return () => clearInterval(timer);
   }, [homeData]);
 
-  if (loading) {
+  if (loading && checking) {
     return <LoadingPage />;
   }
 
-  if (maintenance || !homeData) {
-    return <MaintenancePage onRetry={fetchHomeData} checking={checking} />;
-  }
-
-  const hero = homeData.hero;
+  const hero = homeData.hero || DEFAULT_HOME_DATA.hero;
   const currentStory =
-    homeData.storyChapters[activeStory] || homeData.storyChapters[0];
-  const currentPembina = homeData.pembina[activePembina] || homeData.pembina[0];
+    homeData.storyChapters?.[activeStory] || DEFAULT_HOME_DATA.storyChapters[0];
+  const currentPembina =
+    homeData.pembina?.[activePembina] || DEFAULT_HOME_DATA.pembina[0];
 
   return (
     <main className="overflow-x-hidden bg-[#f7f1df] text-slate-900">
@@ -958,7 +902,6 @@ const ctaScene = {
       <SectionNavigator />
       <Navbar />
 
-      {/* HERO */}
       <Section id="hero" dark scene={0} label="Awal">
         <div className="absolute inset-0">
           <motion.div style={{ scale: heroImageScale }} className="h-full w-full">
@@ -1035,6 +978,15 @@ const ctaScene = {
                   <FaPlay />
                   Lihat Program
                 </MagneticButton>
+
+                <a
+                  href={WHATSAPP_ADMIN_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex w-full items-center justify-center gap-3 rounded-full border border-white/25 bg-white/10 px-8 py-4 font-black text-white backdrop-blur-xl transition hover:-translate-y-1 hover:bg-white/20 sm:w-auto"
+                >
+                  Hubungi Admin
+                </a>
               </motion.div>
 
               <motion.div
@@ -1110,6 +1062,7 @@ const ctaScene = {
 
                     <div className="mt-8 rounded-3xl bg-emerald-950/80 p-6">
                       <FaQuoteLeft className="mb-4 text-2xl text-yellow-300" />
+
                       <p className="text-base leading-relaxed text-emerald-50">
                         “Tempat belajar menemukan arah, bukan hanya mengejar
                         nilai.”
@@ -1133,18 +1086,18 @@ const ctaScene = {
         </Container>
       </Section>
 
-      {/* VALUES */}
-<Section
-  id="values"
-  scene={1}
-  label="Nilai"
-  className="bg-gradient-to-br from-[#f7f1df] via-white to-emerald-50"
->
+      <Section
+        id="values"
+        scene={1}
+        label="Nilai"
+        className="bg-gradient-to-br from-[#f7f1df] via-white to-emerald-50"
+      >
         <IslamicBackground />
+
         <Container
-  style={valuesScene}
-  className="flex min-h-[100svh] flex-col justify-center"
->
+          style={valuesScene}
+          className="flex min-h-[100svh] flex-col justify-center"
+        >
           <SectionHeader
             badge="Nilai Pendidikan"
             title="Lingkungan pesantren membentuk kehidupan santri"
@@ -1179,20 +1132,19 @@ const ctaScene = {
         </Container>
       </Section>
 
-      {/* STORY */}
       <Section id="story" dark scene={2} label="Cerita">
         <IslamicBackground dark intense />
 
         <Container className="flex min-h-[100svh] items-center">
           <div className="grid w-full items-center gap-8 lg:grid-cols-[0.92fr_1.08fr]">
             <ParallaxBlock
-  range={[1500, 3200]}
-  y={[160, -140]}
-  scale={[0.92, 1.05]}
-  rotate={[-3, 2]}
-  className="hidden lg:block"
->
-  <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/10 p-3 shadow-2xl backdrop-blur-xl">
+              range={[1500, 3200]}
+              y={[160, -140]}
+              scale={[0.92, 1.05]}
+              rotate={[-3, 2]}
+              className="hidden lg:block"
+            >
+              <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/10 p-3 shadow-2xl backdrop-blur-xl">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeStory}
@@ -1256,6 +1208,7 @@ const ctaScene = {
               <div className="mt-7 grid grid-cols-4 gap-2">
                 {homeData.storyChapters.map((item, index) => (
                   <motion.button
+                    type="button"
                     key={item.number}
                     onClick={() => setActiveStory(index)}
                     whileTap={{ scale: 0.96 }}
@@ -1291,14 +1244,13 @@ const ctaScene = {
         </Container>
       </Section>
 
-      {/* PROGRAM */}
       <Section id="program" scene={3} label="Program" className="bg-[#f7f1df]">
         <IslamicBackground />
 
-<Container
-  style={programScene}
-  className="flex min-h-[100svh] flex-col justify-center"
->
+        <Container
+          style={programScene}
+          className="flex min-h-[100svh] flex-col justify-center"
+        >
           <SectionHeader
             badge="Program Pembinaan"
             title="Program santri yang aktif dan bermakna"
@@ -1356,204 +1308,205 @@ const ctaScene = {
         </Container>
       </Section>
 
-      {/* PEMBINA */}
-<Section id="pembina" dark scene={4} label="Pembina">
-  <IslamicBackground dark intense />
+      <Section id="pembina" dark scene={4} label="Pembina">
+        <IslamicBackground dark intense />
 
-<ResponsiveMotionContainer
-  desktopStyle={pembinaScene}
-  className="flex min-h-[100svh] items-center"
->
-    <div className="w-full max-w-full overflow-hidden">
-      {/* HEADER */}
-      <Reveal>
-        <div className="mx-auto max-w-5xl text-center">
-          <Badge light>Pembina Pesantren</Badge>
+        <ResponsiveMotionContainer
+          desktopStyle={pembinaScene}
+          className="flex min-h-[100svh] items-center"
+        >
+          <div className="w-full max-w-full overflow-hidden">
+            <Reveal>
+              <div className="mx-auto max-w-5xl text-center">
+                <Badge light>Pembina Pesantren</Badge>
 
-          <h2 className="mt-5 text-[clamp(2rem,7vw,4.5rem)] font-black leading-[0.95] tracking-[-0.06em] text-white">
-            Santri tumbuh bersama
-            <span className="block text-yellow-300">
-              pembina yang mendampingi.
-            </span>
-          </h2>
+                <h2 className="mt-5 text-[clamp(2rem,7vw,4.5rem)] font-black leading-[0.95] tracking-[-0.06em] text-white">
+                  Santri tumbuh bersama
+                  <span className="block text-yellow-300">
+                    pembina yang mendampingi.
+                  </span>
+                </h2>
 
-          <p className="mx-auto mt-5 max-w-3xl text-sm leading-relaxed text-emerald-100 sm:text-base lg:text-lg">
-            Pembina pesantren mendampingi adab, disiplin, ibadah, kebersihan,
-            dan kehidupan santri sehari-hari agar tumbuh lebih mandiri.
-          </p>
-        </div>
-      </Reveal>
-
-      {/* CONTENT */}
-      <div className="mt-8 grid w-full max-w-full grid-cols-1 gap-5 overflow-hidden lg:mt-10 xl:grid-cols-[0.85fr_1.15fr] xl:items-stretch">
-        {/* FOTO PEMBINA */}
-        <Reveal type="left">
-          <div className="relative overflow-hidden rounded-[1.8rem] border border-white/10 bg-white/10 p-3 shadow-2xl backdrop-blur-xl sm:rounded-[2rem]">
-            <div className="absolute -right-20 -top-20 h-60 w-60 rounded-full bg-yellow-300/10 blur-3xl" />
-            <div className="absolute -bottom-20 -left-20 h-60 w-60 rounded-full bg-emerald-300/10 blur-3xl" />
-
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activePembina}
-                initial={{ opacity: 0, scale: 0.96, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.96, y: -20 }}
-                transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-                className="relative overflow-hidden rounded-[1.4rem]"
-              >
-                <div className="relative h-[360px] overflow-hidden sm:h-[460px] xl:h-[620px]">
-                  <SafeImage
-                    src={currentPembina.image}
-                    alt={currentPembina.name}
-                    className="h-full w-full object-cover"
-                  />
-
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/25 to-transparent" />
-
-                  <div className="absolute left-4 top-4 rounded-full bg-yellow-400 px-4 py-2 text-[10px] font-black uppercase tracking-[0.22em] text-emerald-950">
-                    {currentPembina.badge}
-                  </div>
-
-                  <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-7">
-                    <p className="text-xs font-black uppercase tracking-[0.25em] text-yellow-300">
-                      {currentPembina.role}
-                    </p>
-
-                    <h3 className="mt-2 line-clamp-2 text-2xl font-black leading-tight text-white sm:text-4xl">
-                      {currentPembina.name}
-                    </h3>
-
-                    <p className="mt-3 line-clamp-3 max-w-xl text-sm leading-relaxed text-emerald-100">
-                      {currentPembina.focus}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        </Reveal>
-
-        {/* INFORMASI PEMBINA */}
-        <Reveal type="right">
-          <div className="flex h-full min-w-0 max-w-full flex-col overflow-hidden rounded-[1.8rem] border border-white/10 bg-white/10 p-4 shadow-2xl backdrop-blur-xl sm:rounded-[2rem] sm:p-5 lg:p-6">
-            <div className="relative overflow-hidden rounded-[1.5rem] border border-white/10 bg-gradient-to-br from-white/15 via-white/10 to-yellow-300/10 p-5 sm:p-6 lg:p-7">
-              <div className="absolute -right-20 -top-20 h-56 w-56 rounded-full bg-yellow-300/10 blur-3xl" />
-
-              <div className="relative z-10">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-yellow-400 text-2xl text-emerald-950 shadow-lg">
-                  {getIcon(currentPembina.iconKey)}
-                </div>
-
-                <p className="mt-5 text-xs font-black uppercase tracking-[0.24em] text-yellow-300 sm:tracking-[0.28em]">
-                  Fokus Pembinaan
-                </p>
-
-                <h3 className="mt-3 max-w-full break-words text-[clamp(1.35rem,5.5vw,3.2rem)] font-black leading-[1.05] tracking-[-0.04em] text-white">
-  Membina santri dengan ilmu, adab, dan keteladanan.
-</h3>
-
-                <p className="mt-5 line-clamp-4 text-sm leading-relaxed text-emerald-100 sm:text-base">
-                  {currentPembina.focus}
+                <p className="mx-auto mt-5 max-w-3xl text-sm leading-relaxed text-emerald-100 sm:text-base lg:text-lg">
+                  Pembina pesantren mendampingi adab, disiplin, ibadah,
+                  kebersihan, dan kehidupan santri sehari-hari agar tumbuh lebih
+                  mandiri.
                 </p>
               </div>
-            </div>
+            </Reveal>
 
-            {/* LIST DESKTOP / TABLET */}
-            <div className="mt-5 hidden gap-3 md:grid">
-              {homeData.pembina.map((item, index) => (
-                <motion.button
-                  key={item.name}
-                  onClick={() => setActivePembina(index)}
-                  whileTap={{ scale: 0.97 }}
-                  whileHover={{ x: 6 }}
-                  className={`group flex min-w-0 items-center gap-4 rounded-2xl border p-4 text-left transition ${
-                    activePembina === index
-                      ? "border-yellow-300 bg-yellow-400 text-emerald-950 shadow-lg shadow-yellow-950/20"
-                      : "border-white/10 bg-white/10 text-white hover:border-yellow-300/40 hover:bg-white/15"
-                  }`}
-                >
-                  <div
-                    className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-lg transition ${
-                      activePembina === index
-                        ? "bg-emerald-950 text-yellow-300"
-                        : "bg-white/10 text-yellow-300 group-hover:bg-yellow-300 group-hover:text-emerald-950"
-                    }`}
-                  >
-                    {getIcon(item.iconKey)}
-                  </div>
+            <div className="mt-8 grid w-full max-w-full grid-cols-1 gap-5 overflow-hidden lg:mt-10 xl:grid-cols-[0.85fr_1.15fr] xl:items-stretch">
+              <Reveal type="left">
+                <div className="relative overflow-hidden rounded-[1.8rem] border border-white/10 bg-white/10 p-3 shadow-2xl backdrop-blur-xl sm:rounded-[2rem]">
+                  <div className="absolute -right-20 -top-20 h-60 w-60 rounded-full bg-yellow-300/10 blur-3xl" />
+                  <div className="absolute -bottom-20 -left-20 h-60 w-60 rounded-full bg-emerald-300/10 blur-3xl" />
 
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate font-black">{item.name}</p>
-
-                    <p
-                      className={`mt-1 truncate text-xs font-semibold ${
-                        activePembina === index
-                          ? "text-emerald-900"
-                          : "text-emerald-100/75"
-                      }`}
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={activePembina}
+                      initial={{ opacity: 0, scale: 0.96, y: 20 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.96, y: -20 }}
+                      transition={{
+                        duration: 0.45,
+                        ease: [0.22, 1, 0.36, 1],
+                      }}
+                      className="relative overflow-hidden rounded-[1.4rem]"
                     >
-                      {item.role}
-                    </p>
-                  </div>
-                </motion.button>
-              ))}
-            </div>
+                      <div className="relative h-[360px] overflow-hidden sm:h-[460px] xl:h-[620px]">
+                        <SafeImage
+                          src={currentPembina.image}
+                          alt={currentPembina.name}
+                          className="h-full w-full object-cover"
+                        />
 
-            {/* LIST MOBILE */}
-<div className="no-scrollbar mt-5 flex w-full max-w-full gap-3 overflow-x-auto overscroll-x-contain pb-2 md:hidden">              {homeData.pembina.map((item, index) => (
-                <motion.button
-                  key={item.name}
-                  onClick={() => setActivePembina(index)}
-                  whileTap={{ scale: 0.95 }}
-className={`w-[190px] min-w-[190px] rounded-2xl border p-3 text-left transition sm:w-[220px] sm:min-w-[220px] sm:p-4 ${                    activePembina === index
-                      ? "border-yellow-300 bg-yellow-400 text-emerald-950"
-                      : "border-white/10 bg-white/10 text-white"
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${
-                        activePembina === index
-                          ? "bg-emerald-950 text-yellow-300"
-                          : "bg-white/10 text-yellow-300"
-                      }`}
-                    >
-                      {getIcon(item.iconKey)}
-                    </div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/25 to-transparent" />
 
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-black">
-                        {item.name}
+                        <div className="absolute left-4 top-4 rounded-full bg-yellow-400 px-4 py-2 text-[10px] font-black uppercase tracking-[0.22em] text-emerald-950">
+                          {currentPembina.badge}
+                        </div>
+
+                        <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-7">
+                          <p className="text-xs font-black uppercase tracking-[0.25em] text-yellow-300">
+                            {currentPembina.role}
+                          </p>
+
+                          <h3 className="mt-2 line-clamp-2 text-2xl font-black leading-tight text-white sm:text-4xl">
+                            {currentPembina.name}
+                          </h3>
+
+                          <p className="mt-3 line-clamp-3 max-w-xl text-sm leading-relaxed text-emerald-100">
+                            {currentPembina.focus}
+                          </p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+              </Reveal>
+
+              <Reveal type="right">
+                <div className="flex h-full min-w-0 max-w-full flex-col overflow-hidden rounded-[1.8rem] border border-white/10 bg-white/10 p-4 shadow-2xl backdrop-blur-xl sm:rounded-[2rem] sm:p-5 lg:p-6">
+                  <div className="relative overflow-hidden rounded-[1.5rem] border border-white/10 bg-gradient-to-br from-white/15 via-white/10 to-yellow-300/10 p-5 sm:p-6 lg:p-7">
+                    <div className="absolute -right-20 -top-20 h-56 w-56 rounded-full bg-yellow-300/10 blur-3xl" />
+
+                    <div className="relative z-10">
+                      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-yellow-400 text-2xl text-emerald-950 shadow-lg">
+                        {getIcon(currentPembina.iconKey)}
+                      </div>
+
+                      <p className="mt-5 text-xs font-black uppercase tracking-[0.24em] text-yellow-300 sm:tracking-[0.28em]">
+                        Fokus Pembinaan
                       </p>
 
-                      <p
-                        className={`mt-1 truncate text-xs ${
+                      <h3 className="mt-3 max-w-full break-words text-[clamp(1.35rem,5.5vw,3.2rem)] font-black leading-[1.05] tracking-[-0.04em] text-white">
+                        Membina santri dengan ilmu, adab, dan keteladanan.
+                      </h3>
+
+                      <p className="mt-5 line-clamp-4 text-sm leading-relaxed text-emerald-100 sm:text-base">
+                        {currentPembina.focus}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-5 hidden gap-3 md:grid">
+                    {homeData.pembina.map((item, index) => (
+                      <motion.button
+                        type="button"
+                        key={item.name}
+                        onClick={() => setActivePembina(index)}
+                        whileTap={{ scale: 0.97 }}
+                        whileHover={{ x: 6 }}
+                        className={`group flex min-w-0 items-center gap-4 rounded-2xl border p-4 text-left transition ${
                           activePembina === index
-                            ? "text-emerald-900"
-                            : "text-emerald-100/75"
+                            ? "border-yellow-300 bg-yellow-400 text-emerald-950 shadow-lg shadow-yellow-950/20"
+                            : "border-white/10 bg-white/10 text-white hover:border-yellow-300/40 hover:bg-white/15"
                         }`}
                       >
-                        {item.role}
-                      </p>
-                    </div>
+                        <div
+                          className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-lg transition ${
+                            activePembina === index
+                              ? "bg-emerald-950 text-yellow-300"
+                              : "bg-white/10 text-yellow-300 group-hover:bg-yellow-300 group-hover:text-emerald-950"
+                          }`}
+                        >
+                          {getIcon(item.iconKey)}
+                        </div>
+
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate font-black">{item.name}</p>
+
+                          <p
+                            className={`mt-1 truncate text-xs font-semibold ${
+                              activePembina === index
+                                ? "text-emerald-900"
+                                : "text-emerald-100/75"
+                            }`}
+                          >
+                            {item.role}
+                          </p>
+                        </div>
+                      </motion.button>
+                    ))}
                   </div>
-                </motion.button>
-              ))}
+
+                  <div className="no-scrollbar mt-5 flex w-full max-w-full gap-3 overflow-x-auto overscroll-x-contain pb-2 md:hidden">
+                    {homeData.pembina.map((item, index) => (
+                      <motion.button
+                        type="button"
+                        key={item.name}
+                        onClick={() => setActivePembina(index)}
+                        whileTap={{ scale: 0.95 }}
+                        className={`w-[190px] min-w-[190px] rounded-2xl border p-3 text-left transition sm:w-[220px] sm:min-w-[220px] sm:p-4 ${
+                          activePembina === index
+                            ? "border-yellow-300 bg-yellow-400 text-emerald-950"
+                            : "border-white/10 bg-white/10 text-white"
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div
+                            className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${
+                              activePembina === index
+                                ? "bg-emerald-950 text-yellow-300"
+                                : "bg-white/10 text-yellow-300"
+                            }`}
+                          >
+                            {getIcon(item.iconKey)}
+                          </div>
+
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-black">
+                              {item.name}
+                            </p>
+
+                            <p
+                              className={`mt-1 truncate text-xs ${
+                                activePembina === index
+                                  ? "text-emerald-900"
+                                  : "text-emerald-100/75"
+                              }`}
+                            >
+                              {item.role}
+                            </p>
+                          </div>
+                        </div>
+                      </motion.button>
+                    ))}
+                  </div>
+                </div>
+              </Reveal>
             </div>
           </div>
-        </Reveal>
-      </div>
-    </div>
-  </ResponsiveMotionContainer>
-</Section>
+        </ResponsiveMotionContainer>
+      </Section>
 
-      {/* CTA */}
       <Section id="cta" scene={5} label="Daftar" className="bg-[#f7f1df]">
         <IslamicBackground />
 
         <Container
-  style={ctaScene}
-  className="flex min-h-[100svh] items-center justify-center text-center">
+          style={ctaScene}
+          className="flex min-h-[100svh] items-center justify-center text-center"
+        >
           <Reveal type="zoom">
             <div className="relative mx-auto max-w-6xl overflow-hidden rounded-[2.5rem] bg-emerald-950 p-8 text-white shadow-2xl md:p-14">
               <div className="absolute inset-0 bg-[url('/pattern.png')] opacity-[0.07]" />
@@ -1607,76 +1560,89 @@ className={`w-[190px] min-w-[190px] rounded-2xl border p-3 text-left transition 
 
       <Footer />
 
-<style jsx global>{`
-  html {
-    scroll-behavior: smooth;
-  }
+      <style jsx global>{`
+        html {
+          scroll-behavior: smooth;
+        }
 
-  html,
-body {
-  max-width: 100%;
-  overflow-x: hidden;
-}
+        html,
+        body {
+          max-width: 100%;
+          overflow-x: hidden;
+        }
 
-  ::selection {
-    background: #facc15;
-    color: #064e3b;
-  }
+        ::selection {
+          background: #facc15;
+          color: #064e3b;
+        }
 
-  body {
-    cursor: default;
-    background: #041b15;
-  }
+        body {
+          cursor: default;
+          background: #041b15;
+        }
 
-  .line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
+        .line-clamp-2 {
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
 
-  .no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
+        .line-clamp-3 {
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
 
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
+        .line-clamp-4 {
+          display: -webkit-box;
+          -webkit-line-clamp: 4;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
 
-  @media (prefers-reduced-motion: no-preference) {
-    section {
-      scroll-margin-top: 0px;
-    }
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
 
-    .storytelling-depth {
-      transform-style: preserve-3d;
-      perspective: 1200px;
-    }
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
 
-    .soft-cinematic-shadow {
-      box-shadow:
-        0 30px 80px rgba(4, 27, 20, 0.22),
-        0 0 80px rgba(250, 204, 21, 0.08);
-    }
-  }
+        @media (prefers-reduced-motion: no-preference) {
+          section {
+            scroll-margin-top: 0px;
+          }
 
-  @media (max-width: 1023px) {
-  #pembina {
-    overflow-x: hidden;
-  }
+          .storytelling-depth {
+            transform-style: preserve-3d;
+            perspective: 1200px;
+          }
 
-  #pembina * {
-    max-width: 100%;
-  }
-}
+          .soft-cinematic-shadow {
+            box-shadow: 0 30px 80px rgba(4, 27, 20, 0.22),
+              0 0 80px rgba(250, 204, 21, 0.08);
+          }
+        }
 
-  @media (max-width: 768px) {
-    html {
-      scroll-behavior: auto;
-    }
-  }
-`}</style>
+        @media (max-width: 1023px) {
+          #pembina {
+            overflow-x: hidden;
+          }
+
+          #pembina * {
+            max-width: 100%;
+          }
+        }
+
+        @media (max-width: 768px) {
+          html {
+            scroll-behavior: auto;
+          }
+        }
+      `}</style>
     </main>
   );
 }
